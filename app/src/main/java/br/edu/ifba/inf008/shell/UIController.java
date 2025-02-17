@@ -14,9 +14,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.Separator;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.paint.Color;
@@ -37,6 +39,10 @@ import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
 public class UIController extends Application implements IUIController {
     private ICore core;
@@ -128,8 +134,7 @@ public class UIController extends Application implements IUIController {
         var emailField = new TextField();
         var createButton = new Button("Create");
 
-        // criar outro metodo para lidar melhor com a tela de confirmação
-        createButton.setOnAction(event -> User.createUser(nameField.getText(), emailField.getText()));
+        createButton.setOnAction(event -> validateUserInput(nameField.getText(), emailField.getText()));
 
         grid.add(nameLabel, 0, 0);
         grid.add(nameField, 1, 0);
@@ -196,5 +201,53 @@ public class UIController extends Application implements IUIController {
         grid.setAlignment(Pos.CENTER);
 
         return grid;
+    }
+
+    public void validateUserInput(String name, String email) {
+        if (!User.createUser(name, email)) {
+            generateWarning("Invalid credentials for user!");
+            return;
+        }
+        generateWarning("User created successfully!");
+    }
+
+    // modify to fit the book requirements
+    public void validateBookInput(String name, String email) {
+        if (!User.createUser(name, email)) {
+            generateWarning("Invalid credentials for user!");
+            return;
+        }
+        generateWarning("User created successfully!");
+    }
+
+    public void generateWarning(String warningMessage) {
+        var warningStage = new Stage();
+        warningStage.setTitle("Warning");
+        warningStage.setResizable(false);
+
+        var button = new Button("ok");
+        button.setPrefWidth(80);
+        // button.setOnAction(event -> );
+
+        var buttonContainer = new HBox(button);
+        buttonContainer.setSpacing(10);
+        buttonContainer.setAlignment(Pos.BASELINE_RIGHT);
+
+        var warning = new Text(warningMessage);
+        warning.setTextAlignment(TextAlignment.CENTER);
+        warning.setFont(Font.font("Verdana", FontWeight.MEDIUM, 20));
+
+        var separator = new Separator();
+
+        var vBox = new VBox();
+        vBox.setSpacing(10);
+        vBox.setPadding(new Insets(10));
+        vBox.setAlignment(Pos.CENTER);
+        vBox.getChildren().addAll(warning, separator, buttonContainer);
+
+        Scene scene = new Scene(vBox, 300, 100);
+
+        warningStage.setScene(scene);
+        warningStage.showAndWait();
     }
 }

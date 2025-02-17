@@ -20,9 +20,9 @@ public class User implements IPlugin {
     }
 
     private User(String name, String email) {
-        // this.id = id;
-        // this.name = name;
-        // this.email = email;
+        this.id = 1;
+        this.name = name;
+        this.email = email;
     }
 
     public static boolean createUser(String name, String email) {
