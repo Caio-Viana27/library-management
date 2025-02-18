@@ -5,12 +5,14 @@ import br.edu.ifba.inf008.interfaces.ICore;
 import br.edu.ifba.inf008.shell.PluginController;
 
 import br.edu.ifba.inf008.plugins.User;
+import br.edu.ifba.inf008.plugins.Book;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.Group;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.PasswordField;
@@ -130,9 +132,12 @@ public class UIController extends Application implements IUIController {
 
         var nameLabel = new Label("Name");
         var nameField = new TextField();
+        nameField.setPrefWidth(200);
         var emailLabel = new Label("E-mail");
         var emailField = new TextField();
+        emailField.setPrefWidth(200);
         var createButton = new Button("Create");
+        createButton.setPrefWidth(80);
 
         createButton.setOnAction(event -> validateUserInput(nameField.getText(), emailField.getText()));
 
@@ -162,17 +167,33 @@ public class UIController extends Application implements IUIController {
 
         var titleLabel = new Label("Title");
         var titleField = new TextField();
+        titleField.setPrefWidth(200);
         var ISBNLabel = new Label("ISBN");
         var ISBNField = new TextField();
+        ISBNField.setPrefWidth(200);
         var authorLabel = new Label("Author");
         var authorField = new TextField();
-        var genreLabel = new Label("Genre");
-        var genreField = new TextField();
+        authorField.setPrefWidth(200);
         var publicationLabel = new Label("Publication year");
         var publicationField = new TextField();
-        var enrollButton = new Button("Enroll");
+        publicationField.setPrefWidth(200);
 
-        // enrollButton.setOnAction(event -> User.createUser(titleField.getText()));
+        var genreLabel = new Label("Genre");
+        var comboBoxGenre = new ComboBox<String>();
+        comboBoxGenre.getItems().addAll("Fantasy", "Science Fiction", "Mystery", "Thriller", "Romance", "Non-fiction");
+        comboBoxGenre.setPromptText("Select genre");
+        comboBoxGenre.setPrefWidth(200);
+
+        // var genreField = new TextField();
+        var enrollButton = new Button("Enroll");
+        enrollButton.setPrefWidth(80);
+
+        enrollButton.setOnAction(event -> validateBookInput(
+                titleField.getText(),
+                ISBNField.getText(),
+                authorField.getText(),
+                publicationField.getText(),
+                comboBoxGenre.getValue()));
 
         grid.add(titleLabel, 0, 0);
         grid.add(titleField, 1, 0);
@@ -180,10 +201,10 @@ public class UIController extends Application implements IUIController {
         grid.add(ISBNField, 1, 1);
         grid.add(authorLabel, 0, 2);
         grid.add(authorField, 1, 2);
-        grid.add(genreLabel, 0, 3);
-        grid.add(genreField, 1, 3);
         grid.add(publicationLabel, 0, 4);
         grid.add(publicationField, 1, 4);
+        grid.add(genreLabel, 0, 3);
+        grid.add(comboBoxGenre, 1, 3);
         grid.add(enrollButton, 1, 5);
 
         GridPane.setConstraints(titleLabel, 0, 0, 1, 1, HPos.RIGHT, VPos.CENTER);
@@ -192,10 +213,10 @@ public class UIController extends Application implements IUIController {
         GridPane.setConstraints(ISBNField, 1, 1, 1, 1, HPos.RIGHT, VPos.CENTER);
         GridPane.setConstraints(authorLabel, 0, 2, 1, 1, HPos.RIGHT, VPos.CENTER);
         GridPane.setConstraints(authorField, 1, 2, 1, 1, HPos.RIGHT, VPos.CENTER);
-        GridPane.setConstraints(genreLabel, 0, 3, 1, 1, HPos.RIGHT, VPos.CENTER);
-        GridPane.setConstraints(genreField, 1, 3, 1, 1, HPos.RIGHT, VPos.CENTER);
-        GridPane.setConstraints(publicationLabel, 0, 4, 1, 1, HPos.RIGHT, VPos.CENTER);
-        GridPane.setConstraints(publicationField, 1, 4, 1, 1, HPos.RIGHT, VPos.CENTER);
+        GridPane.setConstraints(publicationLabel, 0, 3, 1, 1, HPos.RIGHT, VPos.CENTER);
+        GridPane.setConstraints(publicationField, 1, 3, 1, 1, HPos.RIGHT, VPos.CENTER);
+        GridPane.setConstraints(genreLabel, 0, 4, 1, 1, HPos.RIGHT, VPos.CENTER);
+        GridPane.setConstraints(comboBoxGenre, 1, 4, 1, 1, HPos.RIGHT, VPos.CENTER);
         GridPane.setConstraints(enrollButton, 1, 6, 1, 1, HPos.RIGHT, VPos.CENTER);
 
         grid.setAlignment(Pos.CENTER);
@@ -212,12 +233,12 @@ public class UIController extends Application implements IUIController {
     }
 
     // modify to fit the book requirements
-    public void validateBookInput(String name, String email) {
-        if (!User.createUser(name, email)) {
-            generateWarning("Invalid credentials for user!");
+    public void validateBookInput(String title, String ISBN, String author, String genre, String publicationYear) {
+        if (!Book.createBook(title, ISBN, author, genre, publicationYear)) {
+            generateWarning("Invalid credentials for book!");
             return;
         }
-        generateWarning("User created successfully!");
+        generateWarning("Book created successfully!");
     }
 
     public void generateWarning(String warningMessage) {
@@ -227,7 +248,7 @@ public class UIController extends Application implements IUIController {
 
         var button = new Button("ok");
         button.setPrefWidth(80);
-        // button.setOnAction(event -> );
+        button.setOnAction(event -> warningStage.close());
 
         var buttonContainer = new HBox(button);
         buttonContainer.setSpacing(10);

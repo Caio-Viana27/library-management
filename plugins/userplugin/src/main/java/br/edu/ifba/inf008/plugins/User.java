@@ -11,7 +11,7 @@ public class User implements IPlugin {
     private String name;
     private String email;
 
-    private static HashMap<Integer, User> listOfUsers = new HashMap<>();
+    private static HashMap<Integer, User> listOfUsers = new HashMap<Integer, User>();
 
     public boolean init() {
         // load the books to the static atribute
@@ -31,27 +31,20 @@ public class User implements IPlugin {
         if (!isValidEmail(email))
             return false;
 
-        System.out.println(name + " " + email);
-
-        User.listOfUsers.put(Integer.valueOf(1), new User(name, email));
+        listOfUsers.put(Integer.valueOf(1), new User(name, email));
 
         return true;
     }
 
     public static boolean isValidName(String name) {
-        if (name == null || name.equals(""))
+        if (name == null || "".equals(name))
             return false;
         return true;
     }
 
     public static boolean isValidEmail(String email) {
-        if (email == null || email.equals(""))
+        if (email == null || "".equals(email))
             return false;
-        return true;
-    }
-
-    public static boolean validadeData(String name, String email) {
-
         return true;
     }
 }
