@@ -9,7 +9,9 @@ public interface IUIController {
 
     public abstract boolean createTab(String tabText, Node contents);
 
-    public abstract GridPane createNewUserGrid();
+    public abstract GridPane createUserGrid();
 
     public abstract GridPane enrollNewBookGrid();
+
+    public abstract GridPane loanBookGrid();
 }

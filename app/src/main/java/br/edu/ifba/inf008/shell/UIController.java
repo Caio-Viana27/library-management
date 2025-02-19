@@ -36,7 +36,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.geometry.HPos;
+import javafx.geometry.HorizontalDirection;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.geometry.VPos;
@@ -76,8 +78,17 @@ public class UIController extends Application implements IUIController {
         tabPane = new TabPane();
         tabPane.setSide(Side.TOP);
 
+        var separator = new Separator(Orientation.VERTICAL);
+
+        var BorderPaneLeft = new BorderPane();
+        BorderPaneLeft.setPrefWidth(250);
+        BorderPaneLeft.setRight(separator);
+
+        var bordePaneCenter = new BorderPane(tabPane);
+
         borderPane.setTop(menuBar);
-        borderPane.setCenter(tabPane);
+        borderPane.setCenter(bordePaneCenter);
+        borderPane.setLeft(BorderPaneLeft);
 
         Scene scene = new Scene(borderPane, 960, 600);
 
@@ -110,9 +121,14 @@ public class UIController extends Application implements IUIController {
     }
 
     public boolean createTab(String tabText, Node contents) {
-
         if (!tabPane.isVisible()) {
             tabPane.setVisible(true);
+        }
+
+        for (var tab : tabPane.getTabs()) {
+            if (tab.getText().equals(tabText)) {
+                return false;
+            }
         }
 
         Tab tab = new Tab();
@@ -123,12 +139,23 @@ public class UIController extends Application implements IUIController {
         return true;
     }
 
-    public GridPane createNewUserGrid() {
+    public GridPane createBasicGridPane() {
         var grid = new GridPane();
-
         grid.setPadding(new Insets(20));
         grid.setHgap(10);
         grid.setVgap(10);
+        return grid;
+    }
+
+    public Button createAndSetButtonAction(String label, int prefWidth, EventHandler<ActionEvent> buttonAction) {
+        var button = new Button(label);
+        button.setPrefWidth(prefWidth);
+        button.setOnAction(buttonAction);
+        return button;
+    }
+
+    public GridPane createUserGrid() {
+        var grid = createBasicGridPane();
 
         var nameLabel = new Label("Name");
         var nameField = new TextField();
@@ -136,16 +163,16 @@ public class UIController extends Application implements IUIController {
         var emailLabel = new Label("E-mail");
         var emailField = new TextField();
         emailField.setPrefWidth(200);
-        var createButton = new Button("Create");
-        createButton.setPrefWidth(80);
 
-        createButton.setOnAction(event -> validateUserInput(nameField.getText(), emailField.getText()));
+        Button createButton = createAndSetButtonAction("create", 80, buttonAction -> validateInput(
+                nameField.getText(),
+                emailField.getText()));
 
         grid.add(nameLabel, 0, 0);
         grid.add(nameField, 1, 0);
         grid.add(emailLabel, 0, 1);
         grid.add(emailField, 1, 1);
-        grid.add(createButton, 1, 4);
+        grid.add(createButton, 1, 3);
 
         GridPane.setConstraints(nameLabel, 0, 0, 1, 1, HPos.RIGHT, VPos.CENTER);
         GridPane.setConstraints(nameField, 1, 0, 1, 1, HPos.RIGHT, VPos.CENTER);
@@ -159,11 +186,7 @@ public class UIController extends Application implements IUIController {
     }
 
     public GridPane enrollNewBookGrid() {
-        var grid = new GridPane();
-
-        grid.setPadding(new Insets(20));
-        grid.setHgap(10);
-        grid.setVgap(10);
+        GridPane grid = createBasicGridPane();
 
         var titleLabel = new Label("Title");
         var titleField = new TextField();
@@ -184,11 +207,9 @@ public class UIController extends Application implements IUIController {
         comboBoxGenre.setPromptText("Select genre");
         comboBoxGenre.setPrefWidth(200);
 
-        // var genreField = new TextField();
         var enrollButton = new Button("Enroll");
         enrollButton.setPrefWidth(80);
-
-        enrollButton.setOnAction(event -> validateBookInput(
+        enrollButton.setOnAction(event -> validateInput(
                 titleField.getText(),
                 ISBNField.getText(),
                 authorField.getText(),
@@ -224,7 +245,7 @@ public class UIController extends Application implements IUIController {
         return grid;
     }
 
-    public void validateUserInput(String name, String email) {
+    public void validateInput(String name, String email) {
         if (!User.createUser(name, email)) {
             generateWarning("Invalid credentials for user!");
             return;
@@ -232,13 +253,22 @@ public class UIController extends Application implements IUIController {
         generateWarning("User created successfully!");
     }
 
-    // modify to fit the book requirements
-    public void validateBookInput(String title, String ISBN, String author, String genre, String publicationYear) {
+    public void validateInput(String title, String ISBN, String author, String genre, String publicationYear) {
         if (!Book.createBook(title, ISBN, author, genre, publicationYear)) {
             generateWarning("Invalid credentials for book!");
             return;
         }
         generateWarning("Book created successfully!");
+    }
+
+    public void validateInput(String email) {
+        var user = User.getUser(email);
+
+        if (user == null) {
+            generateWarning("Invalid credentials for user or user does not exist!");
+            return;
+        }
+        tabPane.setVisible(false);
     }
 
     public void generateWarning(String warningMessage) {
@@ -258,17 +288,41 @@ public class UIController extends Application implements IUIController {
         warning.setTextAlignment(TextAlignment.CENTER);
         warning.setFont(Font.font("Verdana", FontWeight.MEDIUM, 20));
 
-        var separator = new Separator();
-
         var vBox = new VBox();
         vBox.setSpacing(10);
         vBox.setPadding(new Insets(10));
         vBox.setAlignment(Pos.CENTER);
-        vBox.getChildren().addAll(warning, separator, buttonContainer);
+        vBox.getChildren().addAll(warning, buttonContainer);
 
         Scene scene = new Scene(vBox, 300, 100);
 
         warningStage.setScene(scene);
         warningStage.showAndWait();
+    }
+
+    public GridPane loanBookGrid() {
+        var grid = createBasicGridPane();
+
+        var emailLabel = new Label("E-mail");
+        var emailField = new TextField();
+        emailField.setPrefWidth(200);
+
+        Button button = createAndSetButtonAction("select", 80, Action -> validateInput(emailField.getText()));
+
+        grid.add(emailLabel, 0, 0);
+        grid.add(emailField, 1, 0);
+        grid.add(button, 1, 2);
+
+        GridPane.setConstraints(emailLabel, 0, 0, 1, 1, HPos.RIGHT, VPos.CENTER);
+        GridPane.setConstraints(emailField, 1, 0, 1, 1, HPos.RIGHT, VPos.CENTER);
+        GridPane.setConstraints(button, 1, 2, 1, 1, HPos.RIGHT, VPos.CENTER);
+
+        grid.setAlignment(Pos.CENTER);
+
+        return grid;
+    }
+
+    public void createLoanWindow(User user) {
+        return;
     }
 }

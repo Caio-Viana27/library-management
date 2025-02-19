@@ -12,6 +12,7 @@ public class Book implements IPlugin {
     private String author;
     private String genre;
     private String publicationYear;
+    private boolean isLent = false;
 
     private static HashMap<String, Book> listOfBooks = new HashMap<String, Book>();
 
@@ -20,6 +21,9 @@ public class Book implements IPlugin {
         // load the books to the static atribute
 
         return true;
+    }
+
+    public Book() {
     }
 
     private Book(String title, String ISBN, String author, String genre, String publicationYear) {

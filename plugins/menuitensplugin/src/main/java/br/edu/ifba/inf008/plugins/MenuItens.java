@@ -8,9 +8,10 @@ public class MenuItens implements IPlugin {
     public boolean init() {
         IUIController uiController = ICore.getInstance().getUIController();
 
-        uiController.createMenuItem("User", "Create User", uiController.createNewUserGrid());
+        uiController.createMenuItem("User", "Create User", uiController.createUserGrid());
         uiController.createMenuItem("Books", "Enroll Book", uiController.enrollNewBookGrid());
-        // uiController.createMenuItem("Books", "Loan Book", "Loan Method");
+        uiController.createMenuItem("Books", "Loan Book", uiController.loanBookGrid());
+
         // uiController.createMenuItem("Books", "Return Book", "Return Method");
 
         return true;
