@@ -13,7 +13,7 @@ public class User implements IPlugin {
     private int id;
     private String name;
     private String email;
-    private ArrayList<Loan> rentBooks;
+    private ArrayList<Loan> rentedBooks = null;
 
     private static HashMap<String, User> listOfUsers = new HashMap<String, User>();
 
@@ -56,5 +56,17 @@ public class User implements IPlugin {
 
     public static User getUser(String email) {
         return listOfUsers.get(email);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public ArrayList<Loan> getRentedBooks() {
+        return rentedBooks;
     }
 }

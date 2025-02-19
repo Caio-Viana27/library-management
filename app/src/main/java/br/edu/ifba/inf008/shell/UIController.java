@@ -6,22 +6,31 @@ import br.edu.ifba.inf008.shell.PluginController;
 
 import br.edu.ifba.inf008.plugins.User;
 import br.edu.ifba.inf008.plugins.Book;
+import br.edu.ifba.inf008.plugins.Loan;
+
+import java.util.HashMap;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.Group;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuButton;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.control.Separator;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -78,17 +87,16 @@ public class UIController extends Application implements IUIController {
         tabPane = new TabPane();
         tabPane.setSide(Side.TOP);
 
-        var separator = new Separator(Orientation.VERTICAL);
-
-        var BorderPaneLeft = new BorderPane();
-        BorderPaneLeft.setPrefWidth(250);
-        BorderPaneLeft.setRight(separator);
-
         var bordePaneCenter = new BorderPane(tabPane);
+        var borderPaneLeft = new BorderPane();
+        borderPaneLeft.setPrefWidth(250);
+        borderPaneLeft.setStyle(String.join("\n", "-fx-background-color: rgb(230, 230, 230);",
+                "-fx-border-color: rgb(184, 184, 184);",
+                "-fx-border-width: 1px;"));
 
         borderPane.setTop(menuBar);
         borderPane.setCenter(bordePaneCenter);
-        borderPane.setLeft(BorderPaneLeft);
+        borderPane.setLeft(borderPaneLeft);
 
         Scene scene = new Scene(borderPane, 960, 600);
 
@@ -142,6 +150,14 @@ public class UIController extends Application implements IUIController {
     public GridPane createBasicGridPane() {
         var grid = new GridPane();
         grid.setPadding(new Insets(20));
+        grid.setHgap(10);
+        grid.setVgap(10);
+        return grid;
+    }
+
+    public GridPane createBasicGridPane(int topRightBottonLeft) {
+        var grid = new GridPane();
+        grid.setPadding(new Insets(topRightBottonLeft));
         grid.setHgap(10);
         grid.setVgap(10);
         return grid;
@@ -269,6 +285,8 @@ public class UIController extends Application implements IUIController {
             return;
         }
         tabPane.setVisible(false);
+
+        createLoanWindow(user, Book.getListOfBooks());
     }
 
     public void generateWarning(String warningMessage) {
@@ -286,7 +304,7 @@ public class UIController extends Application implements IUIController {
 
         var warning = new Text(warningMessage);
         warning.setTextAlignment(TextAlignment.CENTER);
-        warning.setFont(Font.font("Verdana", FontWeight.MEDIUM, 20));
+        warning.setFont(Font.font("System", FontWeight.MEDIUM, 20));
 
         var vBox = new VBox();
         vBox.setSpacing(10);
@@ -322,7 +340,71 @@ public class UIController extends Application implements IUIController {
         return grid;
     }
 
-    public void createLoanWindow(User user) {
-        return;
+    public void createLoanWindow(User user, HashMap<String, Book> Books) {
+        BorderPane left = (BorderPane) borderPane.getLeft();
+
+        var vBox = new VBox(10);
+        vBox.setPadding(new Insets(10));
+        vBox.setStyle(String.join("\n", "-fx-background-color: rgb(230, 230, 230);",
+                "-fx-border-color: rgb(184, 184, 184);",
+                "-fx-border-width: 1px;"));
+
+        var info = new Text("User Credentials");
+        info.setFill(Color.BLACK);
+        var userName = new Text(user.getName());
+        var userEmail = new Text(user.getEmail());
+        var infoBooks = new Text("Rented Books");
+        infoBooks.setFill(Color.BLACK);
+
+        var infoSeparator = new Separator();
+        var userInfoSeparator = new Separator();
+        var infoBookSeparator = new Separator();
+
+        vBox.getChildren().addAll(
+                info,
+                infoSeparator,
+                userName,
+                userEmail,
+                userInfoSeparator,
+                infoBooks,
+                infoBookSeparator);
+
+        if (user.getRentedBooks() != null && !user.getRentedBooks().isEmpty()) {
+            for (Loan loan : user.getRentedBooks()) {
+                for (Book book : loan.getlistOflentBooks()) {
+                    var title = new Text(book.getTitle());
+                    vBox.getChildren().add(title);
+                }
+                var dueDate = new Text(loan.getReturnDate());
+                var separator = new Separator();
+                vBox.getChildren().addAll(dueDate, separator);
+            }
+        } else {
+            vBox.getChildren().add(new Text("User has no rented books!"));
+        }
+
+        left.setCenter(vBox);
+
+        BorderPane center = (BorderPane) borderPane.getCenter();
+
+        var loanButton = new Button("Loan Book");
+        loanButton.setPrefWidth(80);
+        loanButton.setOnAction(action -> System.out.println("you clicked me!"));
+        ButtonBar.setButtonData(loanButton, ButtonBar.ButtonData.RIGHT);
+
+        var buttonBar = new ButtonBar();
+        buttonBar.setPrefHeight(50);
+        buttonBar.setPadding(new Insets(15));
+        buttonBar.setStyle(String.join("\n", "-fx-background-color: rgb(230, 230, 230);",
+                "-fx-border-color: rgb(184, 184, 184);",
+                "-fx-border-width: 1px;"));
+
+        buttonBar.getButtons().add(loanButton);
+
+        center.setBottom(buttonBar);
+
+        var scrollBar = new ScrollBar();
+        scrollBar.setOrientation(Orientation.VERTICAL);
+        center.setRight(scrollBar);
     }
 }

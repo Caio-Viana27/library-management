@@ -14,7 +14,7 @@ public class Book implements IPlugin {
     private String publicationYear;
     private boolean isLent = false;
 
-    private static HashMap<String, Book> listOfBooks = new HashMap<String, Book>();
+    private static HashMap<String, Book> listOfBooks = null;
 
     public boolean init() {
 
@@ -83,5 +83,13 @@ public class Book implements IPlugin {
 
     public static boolean isValidPublicationYear(String publicationYear) {
         return true;
+    }
+
+    public static HashMap<String, Book> getListOfBooks() {
+        return listOfBooks;
+    }
+
+    public String getTitle() {
+        return title;
     }
 }
