@@ -9,6 +9,7 @@ import br.edu.ifba.inf008.plugins.Book;
 import br.edu.ifba.inf008.plugins.Loan;
 
 import java.util.HashMap;
+import java.util.ArrayList;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -21,12 +22,15 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.ScrollBar;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.Separator;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
@@ -42,6 +46,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.geometry.HPos;
@@ -87,16 +92,8 @@ public class UIController extends Application implements IUIController {
         tabPane = new TabPane();
         tabPane.setSide(Side.TOP);
 
-        var bordePaneCenter = new BorderPane(tabPane);
-        var borderPaneLeft = new BorderPane();
-        borderPaneLeft.setPrefWidth(250);
-        borderPaneLeft.setStyle(String.join("\n", "-fx-background-color: rgb(230, 230, 230);",
-                "-fx-border-color: rgb(184, 184, 184);",
-                "-fx-border-width: 1px;"));
-
         borderPane.setTop(menuBar);
-        borderPane.setCenter(bordePaneCenter);
-        borderPane.setLeft(borderPaneLeft);
+        borderPane.setCenter(tabPane);
 
         Scene scene = new Scene(borderPane, 960, 600);
 
@@ -133,11 +130,8 @@ public class UIController extends Application implements IUIController {
             tabPane.setVisible(true);
         }
 
-        for (var tab : tabPane.getTabs()) {
-            if (tab.getText().equals(tabText)) {
-                return false;
-            }
-        }
+        if (tabAlrearyExist(tabText))
+            return false;
 
         Tab tab = new Tab();
         tab.setText(tabText);
@@ -145,6 +139,15 @@ public class UIController extends Application implements IUIController {
         tabPane.getTabs().add(tab);
 
         return true;
+    }
+
+    public boolean tabAlrearyExist(String tabText) {
+        for (var tab : tabPane.getTabs()) {
+            if (tab.getText().equals(tabText)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public GridPane createBasicGridPane() {
@@ -347,7 +350,11 @@ public class UIController extends Application implements IUIController {
         emailField.setPrefWidth(200);
 
         Button button = createAndSetButtonAction("select", 80, Action -> {
-            validateInput(emailField.getText());
+            if (tabAlrearyExist("Select Book")) {
+                generateWarning("Please finish the previous loan!");
+            } else {
+                validateInput(emailField.getText());
+            }
             emailField.clear();
         });
 
@@ -365,51 +372,83 @@ public class UIController extends Application implements IUIController {
     }
 
     public void createLoanWindow(User user, HashMap<String, Book> Books) {
-        BorderPane left = (BorderPane) borderPane.getLeft();
+        BorderPane left = new BorderPane();
 
-        var vBox = new VBox(10);
-        vBox.setPadding(new Insets(10));
-        vBox.setStyle(String.join("\n", "-fx-background-color: rgb(230, 230, 230);",
-                "-fx-border-color: rgb(184, 184, 184);",
-                "-fx-border-width: 1px;"));
+        var grid = createBasicGridPane(10);
+
+        var col1 = new ColumnConstraints();
+        col1.setHgrow(Priority.ALWAYS);
+        grid.getColumnConstraints().add(col1);
+        var col2 = new ColumnConstraints();
+        col2.setHgrow(Priority.ALWAYS);
+        grid.getColumnConstraints().add(col2);
 
         var info = new Text("User Credentials");
-        info.setFill(Color.BLACK);
+        var nameLable = new Text("User Name:");
         var userName = new Text(user.getName());
+        var emailLable = new Text("User E-mail:");
         var userEmail = new Text(user.getEmail());
         var infoBooks = new Text("Rented Books");
-        infoBooks.setFill(Color.BLACK);
 
         var infoSeparator = new Separator();
         var userInfoSeparator = new Separator();
         var infoBookSeparator = new Separator();
 
-        vBox.getChildren().addAll(
-                info,
-                infoSeparator,
-                userName,
-                userEmail,
-                userInfoSeparator,
-                infoBooks,
-                infoBookSeparator);
+        grid.add(info, 1, 0);
+        grid.add(infoSeparator, 0, 1);
+        grid.add(nameLable, 0, 2);
+        grid.add(userName, 1, 2);
+        grid.add(emailLable, 0, 3);
+        grid.add(userEmail, 1, 3);
+        grid.add(userInfoSeparator, 0, 4);
+        grid.add(infoBooks, 1, 5);
+        grid.add(infoBookSeparator, 0, 6);
+
+        GridPane.setConstraints(info, 1, 0, 1, 1, HPos.LEFT, VPos.CENTER);
+        GridPane.setConstraints(infoSeparator, 0, 1, 3, 1, HPos.RIGHT, VPos.CENTER);
+        GridPane.setConstraints(nameLable, 0, 2, 1, 1, HPos.RIGHT, VPos.CENTER);
+        GridPane.setConstraints(userName, 1, 2, 1, 1, HPos.LEFT, VPos.CENTER);
+        GridPane.setConstraints(emailLable, 0, 3, 1, 1, HPos.RIGHT, VPos.CENTER);
+        GridPane.setConstraints(userEmail, 1, 3, 1, 1, HPos.LEFT, VPos.CENTER);
+        GridPane.setConstraints(userInfoSeparator, 0, 4, 3, 1, HPos.RIGHT, VPos.CENTER);
+        GridPane.setConstraints(infoBooks, 1, 5, 1, 1, HPos.LEFT, VPos.CENTER);
+        GridPane.setConstraints(infoBookSeparator, 0, 6, 3, 1, HPos.RIGHT, VPos.CENTER);
 
         if (user.getRentedBooks() != null && !user.getRentedBooks().isEmpty()) {
+            int i = 7;
             for (Loan loan : user.getRentedBooks()) {
                 for (Book book : loan.getlistOflentBooks()) {
+                    var lable = new Text("Title");
                     var title = new Text(book.getTitle());
-                    vBox.getChildren().add(title);
+
+                    grid.add(lable, 0, i);
+                    GridPane.setConstraints(infoBooks, 1, i, 1, 1, HPos.RIGHT, VPos.CENTER);
+                    grid.add(title, 1, i++);
+                    GridPane.setConstraints(infoBookSeparator, 0, i++, 3, 1, HPos.LEFT, VPos.CENTER);
                 }
-                var dueDate = new Text(loan.getReturnDate());
+                var lable = new Text("Return date:");
+                var returnDate = new Text(loan.getReturnDate());
                 var separator = new Separator();
-                vBox.getChildren().addAll(dueDate, separator);
+
+                grid.add(lable, 0, i);
+                GridPane.setConstraints(lable, 1, i, 1, 1, HPos.RIGHT, VPos.CENTER);
+                grid.add(returnDate, 1, i);
+                GridPane.setConstraints(returnDate, 0, i++, 3, 1, HPos.LEFT, VPos.CENTER);
+                grid.add(separator, 0, i);
+                GridPane.setConstraints(separator, 0, i++, 3, 1, HPos.RIGHT, VPos.CENTER);
             }
         } else {
-            vBox.getChildren().add(new Text("User has no rented books!"));
+            var lable = new Text("User hasn't rented any books!");
+            grid.add(lable, 1, 7);
+            GridPane.setConstraints(lable, 1, 7, 1, 1, HPos.LEFT, VPos.CENTER);
         }
 
-        left.setCenter(vBox);
+        VBox vBoxListOfBooks = createToggableList(Books);
+        vBoxListOfBooks.setPrefWidth(300);
 
-        BorderPane center = (BorderPane) borderPane.getCenter();
+        var scrollPane = new ScrollPane(vBoxListOfBooks);
+        scrollPane.setMinWidth(400);
+        scrollPane.setFitToWidth(true);
 
         var loanButton = new Button("Loan Book");
         loanButton.setPrefWidth(80);
@@ -419,16 +458,29 @@ public class UIController extends Application implements IUIController {
         var buttonBar = new ButtonBar();
         buttonBar.setPrefHeight(50);
         buttonBar.setPadding(new Insets(15));
-        buttonBar.setStyle(String.join("\n", "-fx-background-color: rgb(230, 230, 230);",
-                "-fx-border-color: rgb(184, 184, 184);",
-                "-fx-border-width: 1px;"));
 
         buttonBar.getButtons().add(loanButton);
 
-        center.setBottom(buttonBar);
+        left.setCenter(grid);
+        left.setBottom(buttonBar);
 
-        var scrollBar = new ScrollBar();
-        scrollBar.setOrientation(Orientation.VERTICAL);
-        center.setRight(scrollBar);
+        var splitPane = new SplitPane(left, scrollPane);
+        createTab("Select Book", splitPane);
+    }
+
+    public VBox createToggableList(HashMap<String, Book> Books) {
+        var vBoxListOfBooks = new VBox();
+
+        for (Book book : Books.values()) {
+            if (book.isAvailable()) {
+                var toggleButton = new ToggleButton(book.getTitle());
+                toggleButton.setMinHeight(50);
+                toggleButton.setMaxWidth(Double.MAX_VALUE);
+                // toggleButton.setOnAction();
+
+                vBoxListOfBooks.getChildren().add(toggleButton);
+            }
+        }
+        return vBoxListOfBooks;
     }
 }

@@ -18,6 +18,10 @@ public class User implements IPlugin {
     private static HashMap<String, User> listOfUsers = new HashMap<String, User>();
 
     public boolean init() {
+        User.createUser("caio viana teixeira carmo", "caio@gmail.com");
+        User.createUser("Ravena Dafne", "ravena@gmail.com");
+        User.createUser("camille luz", "camille@gmail.com");
+        User.createUser("Raphael Gramosa", "rafa@gmail.com");
         // load the books to the static atribute
         return true;
     }
