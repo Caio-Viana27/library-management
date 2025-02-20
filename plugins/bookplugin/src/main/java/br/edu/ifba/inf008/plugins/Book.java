@@ -12,9 +12,9 @@ public class Book implements IPlugin {
     private String author;
     private String genre;
     private String publicationYear;
-    private boolean isLent = false;
+    private boolean isAvailable = true;
 
-    private static HashMap<String, Book> listOfBooks = null;
+    private static HashMap<String, Book> listOfBooks = new HashMap<String, Book>();
 
     public boolean init() {
 
@@ -91,5 +91,9 @@ public class Book implements IPlugin {
 
     public String getTitle() {
         return title;
+    }
+
+    public boolean isAvailable() {
+        return isAvailable;
     }
 }

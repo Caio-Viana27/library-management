@@ -180,9 +180,14 @@ public class UIController extends Application implements IUIController {
         var emailField = new TextField();
         emailField.setPrefWidth(200);
 
-        Button createButton = createAndSetButtonAction("create", 80, buttonAction -> validateInput(
-                nameField.getText(),
-                emailField.getText()));
+        Button createButton = createAndSetButtonAction("create", 80, buttonAction -> {
+            validateInput(
+                    nameField.getText(),
+                    emailField.getText());
+
+            nameField.clear();
+            emailField.clear();
+        });
 
         grid.add(nameLabel, 0, 0);
         grid.add(nameField, 1, 0);
@@ -219,18 +224,33 @@ public class UIController extends Application implements IUIController {
 
         var genreLabel = new Label("Genre");
         var comboBoxGenre = new ComboBox<String>();
-        comboBoxGenre.getItems().addAll("Fantasy", "Science Fiction", "Mystery", "Thriller", "Romance", "Non-fiction");
+        comboBoxGenre.getItems().addAll("Fantasy",
+                "Science Fiction",
+                "Mystery",
+                "Thriller",
+                "Romance",
+                "Non-fiction",
+                "Science",
+                "Horror");
+
         comboBoxGenre.setPromptText("Select genre");
         comboBoxGenre.setPrefWidth(200);
 
         var enrollButton = new Button("Enroll");
         enrollButton.setPrefWidth(80);
-        enrollButton.setOnAction(event -> validateInput(
-                titleField.getText(),
-                ISBNField.getText(),
-                authorField.getText(),
-                publicationField.getText(),
-                comboBoxGenre.getValue()));
+        enrollButton.setOnAction(event -> {
+            validateInput(
+                    titleField.getText(),
+                    ISBNField.getText(),
+                    authorField.getText(),
+                    publicationField.getText(),
+                    comboBoxGenre.getValue());
+
+            titleField.clear();
+            ISBNField.clear();
+            authorField.clear();
+            publicationField.clear();
+        });
 
         grid.add(titleLabel, 0, 0);
         grid.add(titleField, 1, 0);
@@ -298,21 +318,22 @@ public class UIController extends Application implements IUIController {
         button.setPrefWidth(80);
         button.setOnAction(event -> warningStage.close());
 
-        var buttonContainer = new HBox(button);
-        buttonContainer.setSpacing(10);
-        buttonContainer.setAlignment(Pos.BASELINE_RIGHT);
+        var buttonBar = new ButtonBar();
+        // buttonBar.setPrefHeight(15);
+        buttonBar.setPadding(new Insets(2));
+        buttonBar.getButtons().add(button);
 
-        var warning = new Text(warningMessage);
-        warning.setTextAlignment(TextAlignment.CENTER);
-        warning.setFont(Font.font("System", FontWeight.MEDIUM, 20));
+        var warningLabel = new Label(warningMessage);
+        warningLabel.setWrapText(true);
+        warningLabel.setTextAlignment(TextAlignment.CENTER);
+        warningLabel.setFont(Font.font("System", FontWeight.MEDIUM, 20));
 
-        var vBox = new VBox();
-        vBox.setSpacing(10);
-        vBox.setPadding(new Insets(10));
-        vBox.setAlignment(Pos.CENTER);
-        vBox.getChildren().addAll(warning, buttonContainer);
+        var borderPane = new BorderPane();
+        borderPane.setPadding(new Insets(10));
+        borderPane.setCenter(warningLabel);
+        borderPane.setBottom(buttonBar);
 
-        Scene scene = new Scene(vBox, 300, 100);
+        Scene scene = new Scene(borderPane, 300, 120);
 
         warningStage.setScene(scene);
         warningStage.showAndWait();
@@ -325,7 +346,10 @@ public class UIController extends Application implements IUIController {
         var emailField = new TextField();
         emailField.setPrefWidth(200);
 
-        Button button = createAndSetButtonAction("select", 80, Action -> validateInput(emailField.getText()));
+        Button button = createAndSetButtonAction("select", 80, Action -> {
+            validateInput(emailField.getText());
+            emailField.clear();
+        });
 
         grid.add(emailLabel, 0, 0);
         grid.add(emailField, 1, 0);
