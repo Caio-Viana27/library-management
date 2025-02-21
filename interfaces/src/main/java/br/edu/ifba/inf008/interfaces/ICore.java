@@ -13,5 +13,11 @@ public abstract class ICore {
 
     public abstract IPluginController getPluginController();
 
+    public abstract IUserController getUserController();
+
+    public abstract IBookController getBookController();
+
+    public abstract ILoanController getLoanController();
+
     protected static ICore instance = null;
 }

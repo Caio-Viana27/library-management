@@ -1,69 +1,50 @@
 package br.edu.ifba.inf008.shell;
 
 import br.edu.ifba.inf008.interfaces.IUIController;
-import br.edu.ifba.inf008.interfaces.ICore;
-import br.edu.ifba.inf008.shell.PluginController;
-
-import br.edu.ifba.inf008.plugins.User;
-import br.edu.ifba.inf008.plugins.Book;
-import br.edu.ifba.inf008.plugins.Loan;
+import br.edu.ifba.inf008.interfaces.IBook;
+import br.edu.ifba.inf008.interfaces.IUser;
+import br.edu.ifba.inf008.interfaces.ILoan;
+import br.edu.ifba.inf008.interfaces.IUserController;
+import br.edu.ifba.inf008.interfaces.IBookController;
 
 import java.util.HashMap;
-import java.util.ArrayList;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.Group;
 import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuButton;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.ScrollBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Separator;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.layout.VBox;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
-import javafx.geometry.HPos;
-import javafx.geometry.HorizontalDirection;
-import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
-import javafx.geometry.Pos;
-import javafx.geometry.Side;
-import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.Side;
+import javafx.geometry.VPos;
+import javafx.stage.Stage;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 
 public class UIController extends Application implements IUIController {
-    private ICore core;
     private MenuBar menuBar;
     private TabPane tabPane;
     private BorderPane borderPane;
@@ -92,6 +73,11 @@ public class UIController extends Application implements IUIController {
         tabPane = new TabPane();
         tabPane.setSide(Side.TOP);
 
+        createMenuItem("User", "Create User", createUserGrid());
+        createMenuItem("Books", "Enroll Book", enrollNewBookGrid());
+        createMenuItem("Books", "Loan Book", loanBookGrid());
+        // createMenuItem("Books", "Return Book", "Return Method");
+
         borderPane.setTop(menuBar);
         borderPane.setCenter(tabPane);
 
@@ -101,6 +87,9 @@ public class UIController extends Application implements IUIController {
         primaryStage.show();
 
         Core.getInstance().getPluginController().init();
+
+        Core.getInstance().getUserController().test();
+        Core.getInstance().getBookController().test();
     }
 
     public MenuItem createMenuItem(String menuText, String menuItemText, GridPane newGrid) {
@@ -130,7 +119,7 @@ public class UIController extends Application implements IUIController {
             tabPane.setVisible(true);
         }
 
-        if (tabAlrearyExist(tabText))
+        if (tabAlreadyExist(tabText))
             return false;
 
         Tab tab = new Tab();
@@ -141,7 +130,7 @@ public class UIController extends Application implements IUIController {
         return true;
     }
 
-    public boolean tabAlrearyExist(String tabText) {
+    public boolean tabAlreadyExist(String tabText) {
         for (var tab : tabPane.getTabs()) {
             if (tab.getText().equals(tabText)) {
                 return true;
@@ -183,8 +172,8 @@ public class UIController extends Application implements IUIController {
         var emailField = new TextField();
         emailField.setPrefWidth(200);
 
-        Button createButton = createAndSetButtonAction("create", 80, buttonAction -> {
-            validateInput(
+        Button createButton = createAndSetButtonAction("Create", 80, buttonAction -> {
+            validateUserData(
                     nameField.getText(),
                     emailField.getText());
 
@@ -242,7 +231,7 @@ public class UIController extends Application implements IUIController {
         var enrollButton = new Button("Enroll");
         enrollButton.setPrefWidth(80);
         enrollButton.setOnAction(event -> {
-            validateInput(
+            validateBookData(
                     titleField.getText(),
                     ISBNField.getText(),
                     authorField.getText(),
@@ -284,32 +273,36 @@ public class UIController extends Application implements IUIController {
         return grid;
     }
 
-    public void validateInput(String name, String email) {
-        if (!User.createUser(name, email)) {
-            generateWarning("Invalid credentials for user!");
+    public void validateUserData(String name, String email) {
+        IUserController userController = Core.getInstance().getUserController();
+
+        if (!userController.isValidUserData(name, email)) {
+            generateWarning("Invalid credentials for user or a user with this e-mail already exists!");
             return;
         }
         generateWarning("User created successfully!");
     }
 
-    public void validateInput(String title, String ISBN, String author, String genre, String publicationYear) {
-        if (!Book.createBook(title, ISBN, author, genre, publicationYear)) {
+    public void validateBookData(String title, String ISBN, String author, String genre, String publicationYear) {
+        IBookController bookController = Core.getInstance().getBookController();
+
+        if (!bookController.isValidBookData(title, ISBN, author, genre, publicationYear)) {
             generateWarning("Invalid credentials for book!");
             return;
         }
-        generateWarning("Book created successfully!");
+        generateWarning("Book enrolled successfully!");
     }
 
-    public void validateInput(String email) {
-        var user = User.getUser(email);
+    public void validateUserCredential(String email) {
+        IUser user = Core.getInstance().getUserController().getUser(email);
 
         if (user == null) {
-            generateWarning("Invalid credentials for user or user does not exist!");
+            generateWarning("Invalid e-mail or e-mail doesn't exist!");
             return;
         }
         tabPane.setVisible(false);
 
-        createLoanWindow(user, Book.getListOfBooks());
+        createLoanWindow(user);
     }
 
     public void generateWarning(String warningMessage) {
@@ -322,7 +315,6 @@ public class UIController extends Application implements IUIController {
         button.setOnAction(event -> warningStage.close());
 
         var buttonBar = new ButtonBar();
-        // buttonBar.setPrefHeight(15);
         buttonBar.setPadding(new Insets(2));
         buttonBar.getButtons().add(button);
 
@@ -350,10 +342,10 @@ public class UIController extends Application implements IUIController {
         emailField.setPrefWidth(200);
 
         Button button = createAndSetButtonAction("select", 80, Action -> {
-            if (tabAlrearyExist("Select Book")) {
+            if (tabAlreadyExist("Select Book")) {
                 generateWarning("Please finish the previous loan!");
             } else {
-                validateInput(emailField.getText());
+                validateUserCredential(emailField.getText());
             }
             emailField.clear();
         });
@@ -371,7 +363,7 @@ public class UIController extends Application implements IUIController {
         return grid;
     }
 
-    public void createLoanWindow(User user, HashMap<String, Book> Books) {
+    public void createLoanWindow(IUser user) {
         BorderPane left = new BorderPane();
 
         var grid = createBasicGridPane(10);
@@ -416,8 +408,8 @@ public class UIController extends Application implements IUIController {
 
         if (user.getRentedBooks() != null && !user.getRentedBooks().isEmpty()) {
             int i = 7;
-            for (Loan loan : user.getRentedBooks()) {
-                for (Book book : loan.getlistOflentBooks()) {
+            for (ILoan loan : user.getRentedBooks()) {
+                for (IBook book : loan.getlistOflentBooks()) {
                     var lable = new Text("Title");
                     var title = new Text(book.getTitle());
 
@@ -443,7 +435,7 @@ public class UIController extends Application implements IUIController {
             GridPane.setConstraints(lable, 1, 7, 1, 1, HPos.LEFT, VPos.CENTER);
         }
 
-        VBox vBoxListOfBooks = createToggableList(Books);
+        VBox vBoxListOfBooks = createToggableList(Core.getInstance().getBookController().getBooksList());
         vBoxListOfBooks.setPrefWidth(300);
 
         var scrollPane = new ScrollPane(vBoxListOfBooks);
@@ -460,7 +452,6 @@ public class UIController extends Application implements IUIController {
         buttonBar.setPadding(new Insets(15));
 
         buttonBar.getButtons().add(loanButton);
-
         left.setCenter(grid);
         left.setBottom(buttonBar);
 
@@ -468,10 +459,10 @@ public class UIController extends Application implements IUIController {
         createTab("Select Book", splitPane);
     }
 
-    public VBox createToggableList(HashMap<String, Book> Books) {
+    public VBox createToggableList(HashMap<String, IBook> Books) {
         var vBoxListOfBooks = new VBox();
 
-        for (Book book : Books.values()) {
+        for (IBook book : Books.values()) {
             if (book.isAvailable()) {
                 var toggleButton = new ToggleButton(book.getTitle());
                 toggleButton.setMinHeight(50);

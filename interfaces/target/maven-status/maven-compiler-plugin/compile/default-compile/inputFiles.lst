@@ -1,6 +1,12 @@
+/home/caioviana/repositories/library-management/interfaces/src/main/java/br/edu/ifba/inf008/interfaces/IBookController.java
+/home/caioviana/repositories/library-management/interfaces/src/main/java/br/edu/ifba/inf008/interfaces/ILoan.java
 /home/caioviana/repositories/library-management/interfaces/src/main/java/br/edu/ifba/inf008/interfaces/IAuthenticationController.java
 /home/caioviana/repositories/library-management/interfaces/src/main/java/br/edu/ifba/inf008/interfaces/ICore.java
 /home/caioviana/repositories/library-management/interfaces/src/main/java/br/edu/ifba/inf008/interfaces/IPlugin.java
+/home/caioviana/repositories/library-management/interfaces/src/main/java/br/edu/ifba/inf008/interfaces/IBook.java
+/home/caioviana/repositories/library-management/interfaces/src/main/java/br/edu/ifba/inf008/interfaces/ILoanController.java
+/home/caioviana/repositories/library-management/interfaces/src/main/java/br/edu/ifba/inf008/interfaces/IUserController.java
 /home/caioviana/repositories/library-management/interfaces/src/main/java/br/edu/ifba/inf008/interfaces/IPluginController.java
+/home/caioviana/repositories/library-management/interfaces/src/main/java/br/edu/ifba/inf008/interfaces/IUser.java
 /home/caioviana/repositories/library-management/interfaces/src/main/java/br/edu/ifba/inf008/interfaces/IUIController.java
 /home/caioviana/repositories/library-management/interfaces/src/main/java/br/edu/ifba/inf008/interfaces/IIOController.java

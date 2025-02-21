@@ -11,10 +11,7 @@
     <modules>
         <module>interfaces</module>
         <module>app</module>
-        <module>plugins/userplugin</module>
-        <module>plugins/bookplugin</module>
         <module>plugins/menuitensplugin</module>
-        <module>plugins/loanplugin</module>
     </modules>
 
     <properties>
