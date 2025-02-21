@@ -17,7 +17,7 @@ public class UserController implements IUserController {
         if (!isValidEmail(email))
             return false;
 
-        Core.getInstance().getUserController().addUser(new User(name, email));
+        addUser(new User(name, email));
 
         return true;
     }
@@ -29,7 +29,7 @@ public class UserController implements IUserController {
     }
 
     public boolean isValidEmail(String email) {
-        IUser user = Core.getInstance().getUserController().getUser(email);
+        IUser user = getUser(email);
 
         if (user != null || email == null || "".equals(email))
             return false;

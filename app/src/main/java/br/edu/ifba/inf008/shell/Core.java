@@ -42,13 +42,13 @@ public class Core extends ICore {
     }
 
     public ILoanController getLoanController() {
-        return businessController;
+        return loanController;
     }
 
     private IAuthenticationController authenticationController = new AuthenticationController();
     private IIOController ioController = new IOController();
     private IPluginController pluginController = new PluginController();
-    private ILoanController businessController = new LoanController();
+    private ILoanController loanController = new LoanController();
     private IUserController userController = new UserController();
     private IBookController bookController = new BookController();
 }

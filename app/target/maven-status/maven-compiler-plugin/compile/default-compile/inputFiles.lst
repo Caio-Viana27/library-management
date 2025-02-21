@@ -1,12 +1,13 @@
-/home/caioviana/repositories/library-management/app/src/main/java/br/edu/ifba/inf008/shell/AuthenticationController.java
 /home/caioviana/repositories/library-management/app/src/main/java/br/edu/ifba/inf008/shell/IOController.java
 /home/caioviana/repositories/library-management/app/src/main/java/br/edu/ifba/inf008/shell/UserController.java
+/home/caioviana/repositories/library-management/app/src/main/java/br/edu/ifba/inf008/shell/UIController.java
+/home/caioviana/repositories/library-management/app/src/main/java/br/edu/ifba/inf008/shell/LoanController.java
+/home/caioviana/repositories/library-management/app/src/main/java/br/edu/ifba/inf008/shell/AuthenticationController.java
 /home/caioviana/repositories/library-management/app/src/main/java/br/edu/ifba/inf008/shell/Loan.java
 /home/caioviana/repositories/library-management/app/src/main/java/br/edu/ifba/inf008/App.java
+/home/caioviana/repositories/library-management/app/src/main/java/br/edu/ifba/inf008/shell/UIHelper.java
 /home/caioviana/repositories/library-management/app/src/main/java/br/edu/ifba/inf008/shell/PluginController.java
 /home/caioviana/repositories/library-management/app/src/main/java/br/edu/ifba/inf008/shell/User.java
 /home/caioviana/repositories/library-management/app/src/main/java/br/edu/ifba/inf008/shell/Core.java
 /home/caioviana/repositories/library-management/app/src/main/java/br/edu/ifba/inf008/shell/Book.java
 /home/caioviana/repositories/library-management/app/src/main/java/br/edu/ifba/inf008/shell/BookController.java
-/home/caioviana/repositories/library-management/app/src/main/java/br/edu/ifba/inf008/shell/UIController.java
-/home/caioviana/repositories/library-management/app/src/main/java/br/edu/ifba/inf008/shell/LoanController.java

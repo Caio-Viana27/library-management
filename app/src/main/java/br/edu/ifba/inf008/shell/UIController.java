@@ -7,6 +7,7 @@ import br.edu.ifba.inf008.interfaces.ILoan;
 import br.edu.ifba.inf008.interfaces.IUserController;
 import br.edu.ifba.inf008.interfaces.IBookController;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javafx.application.Application;
@@ -460,15 +461,28 @@ public class UIController extends Application implements IUIController {
     }
 
     public VBox createToggableList(HashMap<String, IBook> Books) {
-        var vBoxListOfBooks = new VBox();
+        VBox vBoxListOfBooks = new VBox();
+
+        UIHelper.buttonList = new ArrayList<ToggleButton>();
+        UIHelper.selectedButtons = new ArrayList<ToggleButton>();
 
         for (IBook book : Books.values()) {
             if (book.isAvailable()) {
                 var toggleButton = new ToggleButton(book.getTitle());
                 toggleButton.setMinHeight(50);
                 toggleButton.setMaxWidth(Double.MAX_VALUE);
-                // toggleButton.setOnAction();
-
+                toggleButton.setOnAction(action -> {
+                    if (toggleButton.isSelected()) {
+                        if (UIHelper.selectedButtons.size() < UIHelper.MAX_VALUE) {
+                            UIHelper.selectedButtons.add(toggleButton);
+                        } else {
+                            toggleButton.setSelected(false);
+                        }
+                    } else {
+                        UIHelper.selectedButtons.remove(toggleButton);
+                    }
+                    UIHelper.updateButtonStates();
+                });
                 vBoxListOfBooks.getChildren().add(toggleButton);
             }
         }

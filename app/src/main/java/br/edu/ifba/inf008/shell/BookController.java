@@ -25,7 +25,7 @@ public class BookController implements IBookController {
             return false;
         }
 
-        Core.getInstance().getBookController().addBook(new Book(title, ISBN, author, genre, publicationYear));
+        addBook(new Book(title, ISBN, author, genre, publicationYear));
 
         return true;
     }
@@ -38,7 +38,7 @@ public class BookController implements IBookController {
     }
 
     public boolean isValidISBN(String ISBN) {
-        boolean ISBNExist = Core.getInstance().getBookController().getBooksList().containsKey(ISBN);
+        boolean ISBNExist = getBooksList().containsKey(ISBN);
 
         if ("".equals(ISBN) || ISBN == null || ISBNExist) {
             return false;
