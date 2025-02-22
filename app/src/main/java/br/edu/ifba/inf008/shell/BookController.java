@@ -78,7 +78,7 @@ public class BookController implements IBookController {
         return booksList;
     }
 
-    public Collection<IBook> getBooksCollection(String searchPattern) {
+    public Collection<IBook> getMatchingPatternBooks(String searchPattern) {
         var matchPatternBooks = new ArrayList<IBook>();
 
         for (IBook book : booksList.values()) {

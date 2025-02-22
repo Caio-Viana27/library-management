@@ -36,4 +36,8 @@ public class Book implements IBook {
     public boolean isAvailable() {
         return isAvailable;
     }
+
+    public void setAvailable(boolean value) {
+        isAvailable = value;
+    }
 }

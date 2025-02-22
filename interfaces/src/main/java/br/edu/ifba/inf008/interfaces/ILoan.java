@@ -1,10 +1,10 @@
 package br.edu.ifba.inf008.interfaces;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public interface ILoan {
 
     public abstract String getReturnDate();
 
-    public abstract ArrayList<IBook> getlistOflentBooks();
+    public abstract HashMap<String, String> getMapOfRentedBooks();
 }

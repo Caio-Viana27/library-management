@@ -9,7 +9,7 @@ public class User implements IUser {
     private int id;
     private String name;
     private String email;
-    private ArrayList<ILoan> rentedBooks = null;
+    private ArrayList<ILoan> loans;
 
     public User() {
     }
@@ -18,6 +18,7 @@ public class User implements IUser {
         this.id = 1;
         this.name = name;
         this.email = email;
+        loans = new ArrayList<ILoan>();
     }
 
     public String getName() {
@@ -29,6 +30,10 @@ public class User implements IUser {
     }
 
     public ArrayList<ILoan> getRentedBooks() {
-        return rentedBooks;
+        return loans;
+    }
+
+    public void addLoan(ILoan newLoan) {
+        loans.add(newLoan);
     }
 }

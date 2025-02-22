@@ -7,8 +7,9 @@ import br.edu.ifba.inf008.interfaces.ILoan;
 import br.edu.ifba.inf008.interfaces.IUserController;
 import br.edu.ifba.inf008.interfaces.IBookController;
 
-import java.util.ArrayList;
+import java.util.Map;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javafx.application.Application;
@@ -131,6 +132,15 @@ public class UIController extends Application implements IUIController {
         tabPane.getTabs().add(tab);
 
         return true;
+    }
+
+    public Tab getTabByTitle(String tabTitle) {
+        for (Tab tab : tabPane.getTabs()) {
+            if (tab.getText().equals(tabTitle)) {
+                return tab;
+            }
+        }
+        return null;
     }
 
     public boolean tabAlreadyExist(String tabText) {
@@ -370,6 +380,7 @@ public class UIController extends Application implements IUIController {
         BorderPane left = new BorderPane();
 
         var grid = createBasicGridPane(10);
+        grid.setMinWidth(500);
 
         var col1 = new ColumnConstraints();
         col1.setHgrow(Priority.ALWAYS);
@@ -412,25 +423,25 @@ public class UIController extends Application implements IUIController {
         if (user.getRentedBooks() != null && !user.getRentedBooks().isEmpty()) {
             int i = 7;
             for (ILoan loan : user.getRentedBooks()) {
-                for (IBook book : loan.getlistOflentBooks()) {
-                    var lable = new Text("Title");
-                    var title = new Text(book.getTitle());
+                for (String book : loan.getMapOfRentedBooks().values()) {
+                    var lable = new Text("Title:");
+                    var title = new Text(book);
 
                     grid.add(lable, 0, i);
-                    GridPane.setConstraints(infoBooks, 1, i, 1, 1, HPos.RIGHT, VPos.CENTER);
-                    grid.add(title, 1, i++);
-                    GridPane.setConstraints(infoBookSeparator, 0, i++, 3, 1, HPos.LEFT, VPos.CENTER);
+                    GridPane.setConstraints(lable, 0, i, 1, 1, HPos.RIGHT, VPos.CENTER);
+                    grid.add(title, 1, i);
+                    GridPane.setConstraints(title, 1, i++, 2, 1, HPos.LEFT, VPos.CENTER);
                 }
                 var lable = new Text("Return date:");
                 var returnDate = new Text(loan.getReturnDate());
                 var separator = new Separator();
 
                 grid.add(lable, 0, i);
-                GridPane.setConstraints(lable, 1, i, 1, 1, HPos.RIGHT, VPos.CENTER);
+                GridPane.setConstraints(lable, 0, i, 1, 1, HPos.RIGHT, VPos.CENTER);
                 grid.add(returnDate, 1, i);
-                GridPane.setConstraints(returnDate, 0, i++, 3, 1, HPos.LEFT, VPos.CENTER);
+                GridPane.setConstraints(returnDate, 1, i++, 2, 1, HPos.LEFT, VPos.CENTER);
                 grid.add(separator, 0, i);
-                GridPane.setConstraints(separator, 0, i++, 3, 1, HPos.RIGHT, VPos.CENTER);
+                GridPane.setConstraints(separator, 0, i++, 2, 1, HPos.RIGHT, VPos.CENTER);
             }
         } else {
             var lable = new Text("User hasn't rented any books!");
@@ -439,10 +450,10 @@ public class UIController extends Application implements IUIController {
         }
 
         VBox vBoxListOfBooks = createToggableList(Core.getInstance().getBookController().getBooksMap().values());
-        vBoxListOfBooks.setPrefWidth(300);
+        vBoxListOfBooks.setPrefWidth(400);
 
         var scrollPane = new ScrollPane(vBoxListOfBooks);
-        scrollPane.setMinWidth(350);
+        scrollPane.setMinWidth(400);
         scrollPane.setFitToWidth(true);
 
         var borderPanebooklist = new BorderPane();
@@ -455,7 +466,7 @@ public class UIController extends Application implements IUIController {
         var searchTrigger = createAndSetButtonAction("search", 80, action -> {
             scrollPane.setContent(
                     createToggableList(
-                            Core.getInstance().getBookController().getBooksCollection(searchField.getText())));
+                            Core.getInstance().getBookController().getMatchingPatternBooks(searchField.getText())));
         });
 
         var hBox = new HBox();
@@ -465,9 +476,25 @@ public class UIController extends Application implements IUIController {
 
         borderPanebooklist.setTop(hBox);
 
-        var loanButton = new Button("Loan Book");
-        loanButton.setPrefWidth(80);
-        loanButton.setOnAction(action -> System.out.println("you clicked me!"));
+        var loanButton = createAndSetButtonAction("Loan Book", 80, action -> {
+            Map<String, IBook> booksList = Core.getInstance().getBookController().getBooksMap();
+            var books = new ArrayList<IBook>();
+
+            for (ToggleButton button : UIHelper.selectedButtons) {
+                if (booksList.containsKey(button.getId())) {
+                    var book = booksList.get(button.getId());
+                    book.setAvailable(false);
+                    books.add(book);
+                }
+            }
+            if (Core.getInstance().getLoanController().transaction(user, books)) {
+                generateWarning("Success");
+                tabPane.getTabs().remove(getTabByTitle("Select Book"));
+            } else {
+                generateWarning("Transaction Failed! Maximun of five loans per user");
+            }
+        });
+
         ButtonBar.setButtonData(loanButton, ButtonBar.ButtonData.RIGHT);
 
         var buttonBar = new ButtonBar();
@@ -491,6 +518,7 @@ public class UIController extends Application implements IUIController {
         for (IBook book : Books) {
             if (book.isAvailable()) {
                 var toggleButton = new ToggleButton(book.getTitle());
+                toggleButton.setId(book.getISBN());
                 toggleButton.setMinHeight(50);
                 toggleButton.setMaxWidth(Double.MAX_VALUE);
                 toggleButton.setOnAction(action -> {

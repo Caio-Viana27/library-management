@@ -3,28 +3,22 @@ package br.edu.ifba.inf008.shell;
 import br.edu.ifba.inf008.interfaces.ILoan;
 import br.edu.ifba.inf008.interfaces.IBook;
 
+import java.util.HashMap;
 import java.util.ArrayList;
 
 public class Loan implements ILoan {
     private String startDate;
-    private ArrayList<IBook> listOflentBooks = null;
+    private HashMap<String, String> mapOfRentedBooks = null;
 
     public Loan() {
     }
 
-    public Loan(Book book) {
-        this.startDate = new String("started");
-        this.listOflentBooks = new ArrayList<IBook>();
+    public Loan(ArrayList<IBook> books) {
+        startDate = new String("started");
+        mapOfRentedBooks = new HashMap<String, String>();
 
-        this.listOflentBooks.add(book);
-    }
-
-    public Loan(Book... books) {
-        this.startDate = new String("started");
-        this.listOflentBooks = new ArrayList<IBook>();
-
-        for (int i = 0; i < books.length; i++) {
-            listOflentBooks.add(books[i]);
+        for (IBook book : books) {
+            mapOfRentedBooks.put(book.getISBN(), book.getTitle());
         }
     }
 
@@ -32,7 +26,7 @@ public class Loan implements ILoan {
         return startDate;
     }
 
-    public ArrayList<IBook> getlistOflentBooks() {
-        return listOflentBooks;
+    public HashMap<String, String> getMapOfRentedBooks() {
+        return mapOfRentedBooks;
     }
 }

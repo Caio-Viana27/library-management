@@ -8,4 +8,6 @@ public interface IUser {
     public abstract String getEmail();
 
     public abstract ArrayList<ILoan> getRentedBooks();
+
+    public abstract void addLoan(ILoan newLoan);
 }

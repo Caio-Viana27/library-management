@@ -13,7 +13,7 @@ public interface IBookController {
 
     public abstract HashMap<String, IBook> getBooksMap();
 
-    public abstract Collection<IBook> getBooksCollection(String pattern);
+    public abstract Collection<IBook> getMatchingPatternBooks(String pattern);
 
     public abstract void test();
 }

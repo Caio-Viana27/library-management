@@ -9,4 +9,6 @@ public interface IBook {
     public abstract String getGenre();
 
     public abstract boolean isAvailable();
+
+    public abstract void setAvailable(boolean value);
 }
