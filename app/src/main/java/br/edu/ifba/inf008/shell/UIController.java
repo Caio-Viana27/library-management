@@ -9,6 +9,7 @@ import br.edu.ifba.inf008.interfaces.IBookController;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Collection;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -22,6 +23,7 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.Separator;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.BorderPane;
@@ -89,8 +91,8 @@ public class UIController extends Application implements IUIController {
 
         Core.getInstance().getPluginController().init();
 
-        Core.getInstance().getUserController().test();
-        Core.getInstance().getBookController().test();
+        Core.getInstance().getUserController().test(); // add test data
+        Core.getInstance().getBookController().test(); // add test data
     }
 
     public MenuItem createMenuItem(String menuText, String menuItemText, GridPane newGrid) {
@@ -436,12 +438,32 @@ public class UIController extends Application implements IUIController {
             GridPane.setConstraints(lable, 1, 7, 1, 1, HPos.LEFT, VPos.CENTER);
         }
 
-        VBox vBoxListOfBooks = createToggableList(Core.getInstance().getBookController().getBooksList());
+        VBox vBoxListOfBooks = createToggableList(Core.getInstance().getBookController().getBooksMap().values());
         vBoxListOfBooks.setPrefWidth(300);
 
         var scrollPane = new ScrollPane(vBoxListOfBooks);
-        scrollPane.setMinWidth(400);
+        scrollPane.setMinWidth(350);
         scrollPane.setFitToWidth(true);
+
+        var borderPanebooklist = new BorderPane();
+        borderPanebooklist.setMinWidth(400);
+        borderPanebooklist.setCenter(scrollPane);
+
+        var searchField = new TextField();
+        searchField.setPrefWidth(200);
+
+        var searchTrigger = createAndSetButtonAction("search", 80, action -> {
+            scrollPane.setContent(
+                    createToggableList(
+                            Core.getInstance().getBookController().getBooksCollection(searchField.getText())));
+        });
+
+        var hBox = new HBox();
+        hBox.setPadding(new Insets(10));
+        hBox.setAlignment(Pos.BASELINE_CENTER);
+        hBox.getChildren().addAll(searchField, searchTrigger);
+
+        borderPanebooklist.setTop(hBox);
 
         var loanButton = new Button("Loan Book");
         loanButton.setPrefWidth(80);
@@ -456,17 +478,17 @@ public class UIController extends Application implements IUIController {
         left.setCenter(grid);
         left.setBottom(buttonBar);
 
-        var splitPane = new SplitPane(left, scrollPane);
+        var splitPane = new SplitPane(left, borderPanebooklist);
         createTab("Select Book", splitPane);
     }
 
-    public VBox createToggableList(HashMap<String, IBook> Books) {
+    public VBox createToggableList(Collection<IBook> Books) {
         VBox vBoxListOfBooks = new VBox();
 
         UIHelper.buttonList = new ArrayList<ToggleButton>();
         UIHelper.selectedButtons = new ArrayList<ToggleButton>();
 
-        for (IBook book : Books.values()) {
+        for (IBook book : Books) {
             if (book.isAvailable()) {
                 var toggleButton = new ToggleButton(book.getTitle());
                 toggleButton.setMinHeight(50);

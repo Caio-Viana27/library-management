@@ -1,6 +1,7 @@
 package br.edu.ifba.inf008.interfaces;
 
 import java.util.HashMap;
+import java.util.Collection;
 
 public interface IBookController {
     public abstract boolean isValidBookData(
@@ -10,7 +11,9 @@ public interface IBookController {
 
     public IBook getBook(String BookISBN);
 
-    public abstract HashMap<String, IBook> getBooksList();
+    public abstract HashMap<String, IBook> getBooksMap();
+
+    public abstract Collection<IBook> getBooksCollection(String pattern);
 
     public abstract void test();
 }

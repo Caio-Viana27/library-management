@@ -1,6 +1,8 @@
 package br.edu.ifba.inf008.shell;
 
 import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import br.edu.ifba.inf008.interfaces.IBook;
 import br.edu.ifba.inf008.interfaces.IBookController;
@@ -38,7 +40,7 @@ public class BookController implements IBookController {
     }
 
     public boolean isValidISBN(String ISBN) {
-        boolean ISBNExist = getBooksList().containsKey(ISBN);
+        boolean ISBNExist = getBooksMap().containsKey(ISBN);
 
         if ("".equals(ISBN) || ISBN == null || ISBNExist) {
             return false;
@@ -72,8 +74,19 @@ public class BookController implements IBookController {
         return booksList.get(BookISBN);
     }
 
-    public HashMap<String, IBook> getBooksList() {
+    public HashMap<String, IBook> getBooksMap() {
         return booksList;
+    }
+
+    public Collection<IBook> getBooksCollection(String searchPattern) {
+        var matchPatternBooks = new ArrayList<IBook>();
+
+        for (IBook book : booksList.values()) {
+            if (book.getTitle().contains(searchPattern)) {
+                matchPatternBooks.add(book);
+            }
+        }
+        return matchPatternBooks;
     }
 
     public void test() {
