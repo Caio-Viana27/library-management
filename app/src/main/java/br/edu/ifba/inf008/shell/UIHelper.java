@@ -6,6 +6,9 @@ import java.util.ArrayList;
 
 public class UIHelper {
     public static int MAX_VALUE = 5;
+    public static String LOAN = "Loan";
+    public static String RETURN = "Return";
+
     public static ArrayList<ToggleButton> buttonList = null;
     public static ArrayList<ToggleButton> selectedButtons = null;
 

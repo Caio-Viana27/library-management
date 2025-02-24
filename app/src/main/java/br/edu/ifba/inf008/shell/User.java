@@ -14,8 +14,8 @@ public class User implements IUser {
     public User() {
     }
 
-    public User(String name, String email) {
-        this.id = 1;
+    public User(int id, String name, String email) {
+        this.id = id;
         this.name = name;
         this.email = email;
         loans = new ArrayList<ILoan>();

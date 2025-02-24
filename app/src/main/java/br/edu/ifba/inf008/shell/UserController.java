@@ -6,6 +6,7 @@ import br.edu.ifba.inf008.interfaces.IUser;
 import br.edu.ifba.inf008.interfaces.IUserController;
 
 public class UserController implements IUserController {
+    private int idCounter = 0;
     private HashMap<String, IUser> usersList = new HashMap<String, IUser>();
 
     public UserController() {
@@ -17,7 +18,7 @@ public class UserController implements IUserController {
         if (!isValidEmail(email))
             return false;
 
-        addUser(new User(name, email));
+        addUser(new User(idCounter++, name, email));
 
         return true;
     }

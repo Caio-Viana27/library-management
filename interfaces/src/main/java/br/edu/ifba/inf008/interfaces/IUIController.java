@@ -13,5 +13,5 @@ public interface IUIController {
 
     public abstract GridPane enrollNewBookGrid();
 
-    public abstract GridPane loanBookGrid();
+    public abstract GridPane selectUserGrid(String action);
 }

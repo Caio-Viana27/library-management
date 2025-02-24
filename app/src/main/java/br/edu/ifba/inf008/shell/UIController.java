@@ -8,7 +8,6 @@ import br.edu.ifba.inf008.interfaces.IUserController;
 import br.edu.ifba.inf008.interfaces.IBookController;
 
 import java.util.Map;
-import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -79,8 +78,8 @@ public class UIController extends Application implements IUIController {
 
         createMenuItem("User", "Create User", createUserGrid());
         createMenuItem("Books", "Enroll Book", enrollNewBookGrid());
-        createMenuItem("Books", "Loan Book", loanBookGrid());
-        // createMenuItem("Books", "Return Book", "Return Method");
+        createMenuItem("Books", "Loan Book", selectUserGrid(UIHelper.LOAN));
+        createMenuItem("Books", "Return Book", selectUserGrid(UIHelper.RETURN));
 
         borderPane.setTop(menuBar);
         borderPane.setCenter(tabPane);
@@ -306,16 +305,19 @@ public class UIController extends Application implements IUIController {
         generateWarning("Book enrolled successfully!");
     }
 
-    public void validateUserCredential(String email) {
+    public void validateUserCredential(String email, String action) {
         IUser user = Core.getInstance().getUserController().getUser(email);
 
         if (user == null) {
             generateWarning("Invalid e-mail or e-mail doesn't exist!");
             return;
         }
-        tabPane.setVisible(false);
 
-        createLoanWindow(user);
+        if (UIHelper.LOAN.equals(action)) {
+            createLoanWindow(user);
+        } else if (UIHelper.RETURN.equals(action)) {
+            createReturnWindow(user);
+        }
     }
 
     public void generateWarning(String warningMessage) {
@@ -347,18 +349,18 @@ public class UIController extends Application implements IUIController {
         warningStage.showAndWait();
     }
 
-    public GridPane loanBookGrid() {
-        var grid = createBasicGridPane();
+    public GridPane selectUserGrid(String action) {
+        GridPane grid = createBasicGridPane();
 
         var emailLabel = new Label("E-mail");
         var emailField = new TextField();
         emailField.setPrefWidth(200);
 
-        Button button = createAndSetButtonAction("select", 80, Action -> {
-            if (tabAlreadyExist("Select Book")) {
-                generateWarning("Please finish the previous loan!");
+        Button button = createAndSetButtonAction("select", 80, buttonAction -> {
+            if (tabAlreadyExist(action + " book")) {
+                generateWarning("Please finish the previous " + action + "!");
             } else {
-                validateUserCredential(emailField.getText());
+                validateUserCredential(emailField.getText(), action);
             }
             emailField.clear();
         });
@@ -376,7 +378,149 @@ public class UIController extends Application implements IUIController {
         return grid;
     }
 
+    public void createReturnWindow(IUser user) {
+        String newTabTitle = new String("Select Loan");
+
+        GridPane gridLeft = createBasicGridPane();
+        gridLeft.setMinWidth(300);
+        gridLeft.setStyle("-fx-border-width: 1px; -fx-border-Style: solid; -fx-border-color: rgb(200,200,200);");
+
+        var col1 = new ColumnConstraints();
+        col1.setHgrow(Priority.ALWAYS);
+        gridLeft.getColumnConstraints().add(col1);
+        var col2 = new ColumnConstraints();
+        col2.setHgrow(Priority.ALWAYS);
+        gridLeft.getColumnConstraints().add(col2);
+
+        var userInfo = new Text("User Credentials");
+        var nameLable = new Text("User Name:");
+        var name = new Text(user.getName());
+        var emailLable = new Text("User E-mail:");
+        var email = new Text(user.getEmail());
+
+        var infoSeparator = new Separator();
+        var userInfoSeparator = new Separator();
+
+        gridLeft.add(userInfo, 1, 0);
+        gridLeft.add(infoSeparator, 0, 1);
+        gridLeft.add(nameLable, 0, 2);
+        gridLeft.add(name, 1, 2);
+        gridLeft.add(emailLable, 0, 3);
+        gridLeft.add(email, 1, 3);
+
+        GridPane.setConstraints(userInfo, 1, 0, 1, 1, HPos.LEFT, VPos.CENTER);
+        GridPane.setConstraints(infoSeparator, 0, 1, 3, 1, HPos.RIGHT, VPos.CENTER);
+        GridPane.setConstraints(nameLable, 0, 2, 1, 1, HPos.RIGHT, VPos.CENTER);
+        GridPane.setConstraints(name, 1, 2, 1, 1, HPos.LEFT, VPos.CENTER);
+        GridPane.setConstraints(emailLable, 0, 3, 1, 1, HPos.RIGHT, VPos.CENTER);
+        GridPane.setConstraints(email, 1, 3, 1, 1, HPos.LEFT, VPos.CENTER);
+        GridPane.setConstraints(userInfoSeparator, 0, 4, 3, 1, HPos.RIGHT, VPos.CENTER);
+
+        var borderPane = new BorderPane();
+        borderPane.setLeft(gridLeft);
+
+        GridPane loansGrid = createBasicGridPane();
+
+        var loansGridCol1 = new ColumnConstraints();
+        loansGridCol1.setHgrow(Priority.ALWAYS);
+        loansGrid.getColumnConstraints().add(loansGridCol1);
+        var loansGridCol2 = new ColumnConstraints();
+        loansGridCol2.setHgrow(Priority.ALWAYS);
+        loansGrid.getColumnConstraints().add(loansGridCol2);
+
+        var loanInfo = new Text("Active Loans");
+        var loansSeparator = new Separator();
+
+        loansGrid.add(loanInfo, 0, 0);
+        loansGrid.add(loansSeparator, 0, 2);
+
+        GridPane.setConstraints(loanInfo, 0, 0, 2, 1, HPos.CENTER, VPos.CENTER);
+        GridPane.setConstraints(loansSeparator, 0, 1, 2, 1, HPos.CENTER, VPos.CENTER);
+
+        if (user.getRentedBooks() != null && !user.getRentedBooks().isEmpty()) {
+            int i = 2;
+            for (ILoan loan : user.getRentedBooks()) {
+
+                var idLable = new Text("Loan ID:");
+                var id = new Text(Integer.valueOf(loan.getId()).toString());
+                var dateLable = new Text("Return date:");
+                var returnDate = new Text(loan.getReturnDate());
+
+                loansGrid.add(idLable, 0, i);
+                GridPane.setConstraints(idLable, 0, i, 1, 1, HPos.RIGHT, VPos.CENTER);
+                loansGrid.add(id, 1, i);
+                GridPane.setConstraints(id, 1, i++, 1, 1, HPos.LEFT, VPos.CENTER);
+                loansGrid.add(dateLable, 0, i);
+                GridPane.setConstraints(dateLable, 0, i, 1, 1, HPos.RIGHT, VPos.CENTER);
+                loansGrid.add(returnDate, 1, i);
+                GridPane.setConstraints(returnDate, 1, i++, 1, 1, HPos.LEFT, VPos.CENTER);
+
+                for (String book : loan.getMapOfRentedBooks().values()) {
+                    var lable = new Text("Title:");
+                    var title = new Text(book);
+
+                    loansGrid.add(lable, 0, i);
+                    GridPane.setConstraints(lable, 0, i, 1, 1, HPos.RIGHT, VPos.CENTER);
+                    loansGrid.add(title, 1, i);
+                    GridPane.setConstraints(title, 1, i++, 1, 1, HPos.LEFT, VPos.CENTER);
+                }
+
+                var separator = new Separator();
+                loansGrid.add(separator, 0, i);
+                GridPane.setConstraints(separator, 0, i++, 2, 1, HPos.RIGHT, VPos.CENTER);
+            }
+        } else {
+            var lable = new Text("This user hasn't rented any books!");
+            loansGrid.add(lable, 0, 4);
+            GridPane.setConstraints(lable, 0, 3, 2, 1, HPos.CENTER, VPos.CENTER);
+        }
+
+        var searchField = new TextField();
+        searchField.setPrefWidth(200);
+        searchField.setPromptText("Please enter a loan ID");
+
+        var searchTrigger = createAndSetButtonAction("select", 80, action -> {
+            try {
+                boolean found = false;
+                int loandId = Integer.parseInt(searchField.getText());
+
+                for (ILoan loan : user.getRentedBooks()) {
+                    if (loan.getId() == loandId) {
+                        found = true;
+                        Core.getInstance().getLoanController().ReturnTransaction(loan.getMapOfRentedBooks());
+                        user.getRentedBooks().remove(loan);
+                        break;
+                    }
+                }
+                if (found) {
+                    generateWarning("Book(s) returned!");
+                    tabPane.getTabs().remove(getTabByTitle(newTabTitle));
+                } else {
+                    generateWarning("Please enter a valid ID!");
+                }
+            } catch (Exception e) {
+                generateWarning("Please enter a valid ID!");
+            }
+        });
+
+        var hBox = new HBox();
+        hBox.setPadding(new Insets(10));
+        hBox.setAlignment(Pos.BASELINE_CENTER);
+        hBox.getChildren().addAll(searchField, searchTrigger);
+
+        var scrollPane = new ScrollPane(loansGrid);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setStyle("-fx-border-width: 1px; -fx-border-Style: solid; -fx-border-color: rgb(200,200,200);");
+
+        borderPane.setTop(hBox);
+        borderPane.setCenter(scrollPane);
+        createTab(newTabTitle, borderPane);
+    }
+
     public void createLoanWindow(IUser user) {
+        String newTabTitle = new String("Select Book");
+
         BorderPane left = new BorderPane();
 
         var grid = createBasicGridPane(10);
@@ -391,34 +535,34 @@ public class UIController extends Application implements IUIController {
 
         var info = new Text("User Credentials");
         var nameLable = new Text("User Name:");
-        var userName = new Text(user.getName());
+        var name = new Text(user.getName());
         var emailLable = new Text("User E-mail:");
-        var userEmail = new Text(user.getEmail());
+        var email = new Text(user.getEmail());
         var infoBooks = new Text("Rented Books");
 
         var infoSeparator = new Separator();
         var userInfoSeparator = new Separator();
         var infoBookSeparator = new Separator();
 
-        grid.add(info, 1, 0);
+        grid.add(info, 0, 0);
         grid.add(infoSeparator, 0, 1);
         grid.add(nameLable, 0, 2);
-        grid.add(userName, 1, 2);
+        grid.add(name, 1, 2);
         grid.add(emailLable, 0, 3);
-        grid.add(userEmail, 1, 3);
+        grid.add(email, 1, 3);
         grid.add(userInfoSeparator, 0, 4);
-        grid.add(infoBooks, 1, 5);
+        grid.add(infoBooks, 0, 5);
         grid.add(infoBookSeparator, 0, 6);
 
-        GridPane.setConstraints(info, 1, 0, 1, 1, HPos.LEFT, VPos.CENTER);
-        GridPane.setConstraints(infoSeparator, 0, 1, 3, 1, HPos.RIGHT, VPos.CENTER);
+        GridPane.setConstraints(info, 0, 0, 2, 1, HPos.CENTER, VPos.CENTER);
+        GridPane.setConstraints(infoSeparator, 0, 1, 2, 1, HPos.RIGHT, VPos.CENTER);
         GridPane.setConstraints(nameLable, 0, 2, 1, 1, HPos.RIGHT, VPos.CENTER);
-        GridPane.setConstraints(userName, 1, 2, 1, 1, HPos.LEFT, VPos.CENTER);
+        GridPane.setConstraints(name, 1, 2, 1, 1, HPos.LEFT, VPos.CENTER);
         GridPane.setConstraints(emailLable, 0, 3, 1, 1, HPos.RIGHT, VPos.CENTER);
-        GridPane.setConstraints(userEmail, 1, 3, 1, 1, HPos.LEFT, VPos.CENTER);
-        GridPane.setConstraints(userInfoSeparator, 0, 4, 3, 1, HPos.RIGHT, VPos.CENTER);
-        GridPane.setConstraints(infoBooks, 1, 5, 1, 1, HPos.LEFT, VPos.CENTER);
-        GridPane.setConstraints(infoBookSeparator, 0, 6, 3, 1, HPos.RIGHT, VPos.CENTER);
+        GridPane.setConstraints(email, 1, 3, 1, 1, HPos.LEFT, VPos.CENTER);
+        GridPane.setConstraints(userInfoSeparator, 0, 4, 2, 1, HPos.RIGHT, VPos.CENTER);
+        GridPane.setConstraints(infoBooks, 0, 5, 2, 1, HPos.CENTER, VPos.CENTER);
+        GridPane.setConstraints(infoBookSeparator, 0, 6, 2, 1, HPos.RIGHT, VPos.CENTER);
 
         if (user.getRentedBooks() != null && !user.getRentedBooks().isEmpty()) {
             int i = 7;
@@ -444,9 +588,9 @@ public class UIController extends Application implements IUIController {
                 GridPane.setConstraints(separator, 0, i++, 2, 1, HPos.RIGHT, VPos.CENTER);
             }
         } else {
-            var lable = new Text("User hasn't rented any books!");
-            grid.add(lable, 1, 7);
-            GridPane.setConstraints(lable, 1, 7, 1, 1, HPos.LEFT, VPos.CENTER);
+            var lable = new Text("This user hasn't rented any books!");
+            grid.add(lable, 0, 8);
+            GridPane.setConstraints(lable, 0, 8, 2, 1, HPos.CENTER, VPos.CENTER);
         }
 
         VBox vBoxListOfBooks = createToggableList(Core.getInstance().getBookController().getBooksMap().values());
@@ -489,7 +633,7 @@ public class UIController extends Application implements IUIController {
             }
             if (Core.getInstance().getLoanController().transaction(user, books)) {
                 generateWarning("Success");
-                tabPane.getTabs().remove(getTabByTitle("Select Book"));
+                tabPane.getTabs().remove(getTabByTitle(newTabTitle));
             } else {
                 generateWarning("Transaction Failed! Maximun of five loans per user");
             }
@@ -506,7 +650,7 @@ public class UIController extends Application implements IUIController {
         left.setBottom(buttonBar);
 
         var splitPane = new SplitPane(left, borderPanebooklist);
-        createTab("Select Book", splitPane);
+        createTab(newTabTitle, splitPane);
     }
 
     public VBox createToggableList(Collection<IBook> Books) {
