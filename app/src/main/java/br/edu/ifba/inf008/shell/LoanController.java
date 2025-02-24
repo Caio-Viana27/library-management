@@ -5,6 +5,7 @@ import br.edu.ifba.inf008.interfaces.IUser;
 import br.edu.ifba.inf008.interfaces.IBook;
 import br.edu.ifba.inf008.interfaces.ILoan;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -15,11 +16,11 @@ public class LoanController implements ILoanController {
     public LoanController() {
     }
 
-    public boolean transaction(IUser user, ArrayList<IBook> books) {
-        if (!isValidTrasaction(user, books.size())) {
+    public boolean transaction(IUser user, ArrayList<IBook> books, LocalDate date) {
+        if (!isValidTrasaction(user, books.size(), date)) {
             return false;
         }
-        user.addLoan(new Loan(loanId++, books));
+        user.addLoan(new Loan(loanId++, books, date));
         return true;
     }
 
@@ -29,9 +30,12 @@ public class LoanController implements ILoanController {
         }
     }
 
-    public boolean isValidTrasaction(IUser user, int amountOfBooks) {
+    public boolean isValidTrasaction(IUser user, int amountOfBooks, LocalDate date) {
         if (user.getRentedBooks().isEmpty()) {
             return true;
+        }
+        if (date == null) {
+            return false;
         }
         int numOfRentedBooks = 0;
         for (ILoan loan : user.getRentedBooks()) {

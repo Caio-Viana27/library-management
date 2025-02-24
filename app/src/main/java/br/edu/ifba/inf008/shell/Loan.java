@@ -4,19 +4,20 @@ import br.edu.ifba.inf008.interfaces.ILoan;
 import br.edu.ifba.inf008.interfaces.IBook;
 
 import java.util.HashMap;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class Loan implements ILoan {
     private int id;
-    private String startDate;
+    private LocalDate startDate;
     private HashMap<String, String> mapOfRentedBooks = null;
 
     public Loan() {
     }
 
-    public Loan(int loanId, ArrayList<IBook> books) {
+    public Loan(int loanId, ArrayList<IBook> books, LocalDate date) {
         id = loanId;
-        startDate = new String("started");
+        startDate = date;
         mapOfRentedBooks = new HashMap<String, String>();
 
         for (IBook book : books) {
@@ -28,7 +29,7 @@ public class Loan implements ILoan {
         return id;
     }
 
-    public String getReturnDate() {
+    public LocalDate getStartDate() {
         return startDate;
     }
 

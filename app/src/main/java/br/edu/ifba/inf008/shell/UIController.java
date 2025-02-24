@@ -8,6 +8,7 @@ import br.edu.ifba.inf008.interfaces.IUserController;
 import br.edu.ifba.inf008.interfaces.IBookController;
 
 import java.util.Map;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -16,6 +17,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
@@ -444,7 +446,7 @@ public class UIController extends Application implements IUIController {
                 var idLable = new Text("Loan ID:");
                 var id = new Text(Integer.valueOf(loan.getId()).toString());
                 var dateLable = new Text("Return date:");
-                var returnDate = new Text(loan.getReturnDate());
+                var returnDate = new Text(loan.getStartDate().toString());
 
                 loansGrid.add(idLable, 0, i);
                 GridPane.setConstraints(idLable, 0, i, 1, 1, HPos.RIGHT, VPos.CENTER);
@@ -576,8 +578,8 @@ public class UIController extends Application implements IUIController {
                     grid.add(title, 1, i);
                     GridPane.setConstraints(title, 1, i++, 2, 1, HPos.LEFT, VPos.CENTER);
                 }
-                var lable = new Text("Return date:");
-                var returnDate = new Text(loan.getReturnDate());
+                var lable = new Text("loan date:");
+                var returnDate = new Text(loan.getStartDate().toString());
                 var separator = new Separator();
 
                 grid.add(lable, 0, i);
@@ -605,6 +607,7 @@ public class UIController extends Application implements IUIController {
         borderPanebooklist.setCenter(scrollPane);
 
         var searchField = new TextField();
+        searchField.setPromptText("Search a book");
         searchField.setPrefWidth(200);
 
         var searchTrigger = createAndSetButtonAction("search", 80, action -> {
@@ -613,16 +616,28 @@ public class UIController extends Application implements IUIController {
                             Core.getInstance().getBookController().getMatchingPatternBooks(searchField.getText())));
         });
 
+        DatePicker datePicker = new DatePicker();
+        datePicker.setPromptText("Pick a date");
+        datePicker.setPrefWidth(150);
+        datePicker.setPadding(new Insets(0, 0, 0, 10));
+
         var hBox = new HBox();
         hBox.setPadding(new Insets(10));
         hBox.setAlignment(Pos.BASELINE_CENTER);
-        hBox.getChildren().addAll(searchField, searchTrigger);
+        hBox.getChildren().addAll(datePicker, searchField, searchTrigger);
 
         borderPanebooklist.setTop(hBox);
 
         var loanButton = createAndSetButtonAction("Loan Book", 80, action -> {
             Map<String, IBook> booksList = Core.getInstance().getBookController().getBooksMap();
             var books = new ArrayList<IBook>();
+
+            LocalDate date = datePicker.getValue();
+
+            if (date == null) {
+                generateWarning("Please pick a date");
+                return;
+            }
 
             for (ToggleButton button : UIHelper.selectedButtons) {
                 if (booksList.containsKey(button.getId())) {
@@ -631,7 +646,7 @@ public class UIController extends Application implements IUIController {
                     books.add(book);
                 }
             }
-            if (Core.getInstance().getLoanController().transaction(user, books)) {
+            if (Core.getInstance().getLoanController().transaction(user, books, date)) {
                 generateWarning("Success");
                 tabPane.getTabs().remove(getTabByTitle(newTabTitle));
             } else {
