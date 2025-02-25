@@ -8,6 +8,10 @@ public interface IBook {
 
     public abstract String getGenre();
 
+    public abstract String getAuthor();
+
+    public abstract String getPublicationYear();
+
     public abstract boolean isAvailable();
 
     public abstract void setAvailable(boolean value);

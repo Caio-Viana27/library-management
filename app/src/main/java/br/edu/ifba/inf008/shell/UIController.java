@@ -97,7 +97,11 @@ public class UIController extends Application implements IUIController {
         Core.getInstance().getBookController().test(); // add test data
     }
 
-    public MenuItem createMenuItem(String menuText, String menuItemText, GridPane newGrid) {
+    public MenuBar getMenuBar() {
+        return menuBar;
+    }
+
+    public MenuItem createMenuItem(String menuText, String menuItemText, Node content) {
         // Criar o menu caso ele nao exista
         Menu newMenu = null;
         for (Menu menu : menuBar.getMenus()) {
@@ -113,10 +117,14 @@ public class UIController extends Application implements IUIController {
 
         // Criar o menu item neste menu
         MenuItem menuItem = new MenuItem(menuItemText);
-        menuItem.setOnAction(event -> createTab(menuItemText, newGrid));
+        menuItem.setOnAction(event -> createTab(menuItemText, content));
         newMenu.getItems().add(menuItem);
 
         return menuItem;
+    }
+
+    public TabPane getTabPane() {
+        return tabPane;
     }
 
     public boolean createTab(String tabText, Node contents) {
@@ -457,9 +465,9 @@ public class UIController extends Application implements IUIController {
                 loansGrid.add(returnDate, 1, i);
                 GridPane.setConstraints(returnDate, 1, i++, 1, 1, HPos.LEFT, VPos.CENTER);
 
-                for (String book : loan.getMapOfRentedBooks().values()) {
+                for (IBook book : loan.getRentedBooks()) {
                     var lable = new Text("Title:");
-                    var title = new Text(book);
+                    var title = new Text(book.getTitle());
 
                     loansGrid.add(lable, 0, i);
                     GridPane.setConstraints(lable, 0, i, 1, 1, HPos.RIGHT, VPos.CENTER);
@@ -489,7 +497,7 @@ public class UIController extends Application implements IUIController {
                 for (ILoan loan : user.getRentedBooks()) {
                     if (loan.getId() == loandId) {
                         found = true;
-                        Core.getInstance().getLoanController().ReturnTransaction(loan.getMapOfRentedBooks());
+                        Core.getInstance().getLoanController().ReturnTransaction(loan);
                         user.getRentedBooks().remove(loan);
                         break;
                     }
@@ -569,9 +577,9 @@ public class UIController extends Application implements IUIController {
         if (user.getRentedBooks() != null && !user.getRentedBooks().isEmpty()) {
             int i = 7;
             for (ILoan loan : user.getRentedBooks()) {
-                for (String book : loan.getMapOfRentedBooks().values()) {
+                for (IBook book : loan.getRentedBooks()) {
                     var lable = new Text("Title:");
-                    var title = new Text(book);
+                    var title = new Text(book.getTitle());
 
                     grid.add(lable, 0, i);
                     GridPane.setConstraints(lable, 0, i, 1, 1, HPos.RIGHT, VPos.CENTER);

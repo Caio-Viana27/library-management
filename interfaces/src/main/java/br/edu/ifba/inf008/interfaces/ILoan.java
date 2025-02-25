@@ -1,7 +1,7 @@
 package br.edu.ifba.inf008.interfaces;
 
 import java.time.LocalDate;
-import java.util.HashMap;
+import java.util.ArrayList;
 
 public interface ILoan {
 
@@ -9,5 +9,5 @@ public interface ILoan {
 
     public abstract LocalDate getStartDate();
 
-    public abstract HashMap<String, String> getMapOfRentedBooks();
+    public abstract ArrayList<IBook> getRentedBooks();
 }

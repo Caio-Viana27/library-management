@@ -3,9 +3,11 @@ package br.edu.ifba.inf008.shell;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collection;
+import javafx.collections.FXCollections;
 
 import br.edu.ifba.inf008.interfaces.IBook;
 import br.edu.ifba.inf008.interfaces.IBookController;
+import javafx.collections.ObservableList;
 
 public class BookController implements IBookController {
     private HashMap<String, IBook> booksList = new HashMap<String, IBook>();
@@ -87,6 +89,21 @@ public class BookController implements IBookController {
             }
         }
         return matchPatternBooks;
+    }
+
+    public ArrayList<IBook> getRentedBooksList() {
+        if (booksList.isEmpty() || booksList == null) {
+            return null;
+        }
+
+        var rentedBooksList = new ArrayList<IBook>();
+
+        for (IBook book : booksList.values()) {
+            if (!book.isAvailable()) {
+                rentedBooksList.add(book);
+            }
+        }
+        return rentedBooksList.isEmpty() ? null : rentedBooksList;
     }
 
     public void test() {

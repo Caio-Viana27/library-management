@@ -11,7 +11,7 @@
     <modules>
         <module>interfaces</module>
         <module>app</module>
-        <module>plugins/menuitensplugin</module>
+        <module>plugins/reportplugin</module>
     </modules>
 
     <properties>

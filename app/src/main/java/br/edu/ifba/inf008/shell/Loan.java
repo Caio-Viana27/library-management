@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class Loan implements ILoan {
     private int id;
     private LocalDate startDate;
-    private HashMap<String, String> mapOfRentedBooks = null;
+    private ArrayList<IBook> rentedBooks = null;
 
     public Loan() {
     }
@@ -18,10 +18,10 @@ public class Loan implements ILoan {
     public Loan(int loanId, ArrayList<IBook> books, LocalDate date) {
         id = loanId;
         startDate = date;
-        mapOfRentedBooks = new HashMap<String, String>();
+        rentedBooks = new ArrayList<IBook>();
 
         for (IBook book : books) {
-            mapOfRentedBooks.put(book.getISBN(), book.getTitle());
+            rentedBooks.add(book);
         }
     }
 
@@ -33,7 +33,7 @@ public class Loan implements ILoan {
         return startDate;
     }
 
-    public HashMap<String, String> getMapOfRentedBooks() {
-        return mapOfRentedBooks;
+    public ArrayList<IBook> getRentedBooks() {
+        return rentedBooks;
     }
 }
