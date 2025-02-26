@@ -194,9 +194,11 @@ public class UIController extends Application implements IUIController {
 
         var nameLabel = new Label("Name");
         var nameField = new TextField();
+        nameField.setPromptText("name");
         nameField.setPrefWidth(200);
         var emailLabel = new Label("E-mail");
         var emailField = new TextField();
+        emailField.setPromptText("e-mail");
         emailField.setPrefWidth(200);
 
         Button createButton = createAndSetButtonAction("Create", 80, buttonAction -> {
@@ -231,14 +233,18 @@ public class UIController extends Application implements IUIController {
         var titleLabel = new Label("Title");
         var titleField = new TextField();
         titleField.setPrefWidth(200);
+        titleField.setPromptText("title");
         var ISBNLabel = new Label("ISBN");
         var ISBNField = new TextField();
+        ISBNField.setPromptText("ISBN");
         ISBNField.setPrefWidth(200);
         var authorLabel = new Label("Author");
         var authorField = new TextField();
+        authorField.setPromptText("author");
         authorField.setPrefWidth(200);
         var publicationLabel = new Label("Publication year");
         var publicationField = new TextField();
+        publicationField.setPromptText("dd/mm/yyyy");
         publicationField.setPrefWidth(200);
 
         var genreLabel = new Label("Genre");
@@ -250,7 +256,11 @@ public class UIController extends Application implements IUIController {
                 "Romance",
                 "Non-fiction",
                 "Science",
-                "Horror");
+                "Horror",
+                "Dystopian",
+                "Novel",
+                "Epic Poetry",
+                "Adventure");
 
         comboBoxGenre.setPromptText("Select genre");
         comboBoxGenre.setPrefWidth(200);
@@ -369,6 +379,7 @@ public class UIController extends Application implements IUIController {
 
         var emailLabel = new Label("E-mail");
         var emailField = new TextField();
+        emailField.setPromptText("e-mail");
         emailField.setPrefWidth(200);
 
         Button button = createAndSetButtonAction("select", 80, buttonAction -> {

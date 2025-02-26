@@ -27,7 +27,6 @@ public class LoanController implements ILoanController {
         ILoan newLoan = new Loan(loanIdCounter++, books, date);
 
         if (date.plusDays(14).isBefore(LocalDate.now())) {
-            // overdueBooks.addAll(books);
             overdueLoans.add(newLoan);
         }
 
@@ -100,6 +99,7 @@ public class LoanController implements ILoanController {
     }
 
     public ObservableList<ILoan> getOverdueLoansList() {
+        overdueLoans.clear();
 
         for (IUser user : Core.getInstance().getUserController().getUsersMap().values()) {
             if (!user.getRentedBooks().isEmpty()) {
@@ -112,7 +112,6 @@ public class LoanController implements ILoanController {
                 }
             }
         }
-        System.out.println(overdueLoans.size());
         return overdueLoans;
     }
 }

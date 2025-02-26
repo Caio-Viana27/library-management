@@ -45,9 +45,9 @@ public class IOController implements IIOController {
             out.close();
             file.close();
 
-            System.out.println("saved!");
+            System.out.println("Data saved!");
         } catch (IOException e) {
-            System.out.println("Not saved, IOException");
+            System.out.println("Data not saved, IOException");
             e.printStackTrace();
         }
         return true;
@@ -70,14 +70,14 @@ public class IOController implements IIOController {
             in.close();
             file.close();
 
-            System.out.println("tá loaded meu padrinho");
+            System.out.println("Data loaded!");
         } catch (IOException ex) {
             this.systemData = new Serialization();
-            System.out.println("Not loaded, IOexception");
+            System.out.println("Data not loaded, IOexception");
             ex.printStackTrace();
         } catch (ClassNotFoundException ex) {
             this.systemData = new Serialization();
-            System.out.println("Not loaded, Class not found Exception");
+            System.out.println("Data not loaded, Class not found Exception");
             ex.printStackTrace();
         }
         return true;
