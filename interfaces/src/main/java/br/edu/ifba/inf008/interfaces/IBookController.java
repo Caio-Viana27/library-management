@@ -15,6 +15,8 @@ public interface IBookController {
 
     public abstract HashMap<String, IBook> getBooksMap();
 
+    public abstract void loadBookMap(HashMap<String, IBook> books);
+
     public abstract Collection<IBook> getMatchingPatternBooks(String pattern);
 
     public abstract ArrayList<IBook> getRentedBooksList();

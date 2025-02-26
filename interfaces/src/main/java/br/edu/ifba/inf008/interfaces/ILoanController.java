@@ -6,7 +6,7 @@ import javafx.collections.ObservableList;
 
 import java.time.LocalDate;
 
-public interface ILoanController { // deals with loan and returns
+public interface ILoanController {
 
     public abstract boolean transaction(IUser user, ArrayList<IBook> books, LocalDate date);
 
@@ -17,4 +17,12 @@ public interface ILoanController { // deals with loan and returns
     public abstract ObservableList<IBook> getRentedBooksList();
 
     public abstract ObservableList<ILoan> getOverdueLoansList();
+
+    public abstract void loadRentedBooksList(ArrayList<IBook> books);
+
+    public abstract void loadOverdueLoansList(ArrayList<ILoan> loans);
+
+    public abstract int getLoanIdCounter();
+
+    public abstract void setLoanIdCounter(int counter);
 }

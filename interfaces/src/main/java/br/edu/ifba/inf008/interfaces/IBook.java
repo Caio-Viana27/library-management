@@ -1,6 +1,8 @@
 package br.edu.ifba.inf008.interfaces;
 
-public interface IBook {
+import java.io.Serializable;
+
+public interface IBook extends Serializable {
 
     public abstract String getTitle();
 

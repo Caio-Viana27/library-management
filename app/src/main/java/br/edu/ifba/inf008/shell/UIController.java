@@ -93,8 +93,13 @@ public class UIController extends Application implements IUIController {
 
         Core.getInstance().getPluginController().init();
 
-        Core.getInstance().getUserController().test(); // add test data
-        Core.getInstance().getBookController().test(); // add test data
+        Core.getInstance().getIOController().load();
+        primaryStage.setOnCloseRequest(action -> {
+            Core.getInstance().getIOController().save();
+        });
+
+        // Core.getInstance().getUserController().test(); // add test data
+        // Core.getInstance().getBookController().test(); // add test data
     }
 
     public MenuBar getMenuBar() {

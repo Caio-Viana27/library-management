@@ -158,6 +158,8 @@ public class ReportPlugin implements IPlugin {
     }
 
     public ObservableList<OverdueBook> updateOverdueBooksList(ObservableList<ILoan> loans) {
+        overdueBooks.clear();
+
         for (ILoan loan : loans) {
             for (IBook book : loan.getRentedBooks()) {
                 overdueBooks.add(new OverdueBook(book, calculateFine(loan.getStartDate())));

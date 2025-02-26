@@ -9,7 +9,13 @@ public interface IUserController {
 
     public abstract IUser getUser(String userEmail);
 
-    public abstract HashMap<String, IUser> getUsersList();
+    public abstract HashMap<String, IUser> getUsersMap();
+
+    public abstract void loadUsersMap(HashMap<String, IUser> users);
+
+    public abstract int getUserIdCounter();
+
+    public abstract void setUserIdCounter(int counter);
 
     public abstract void test();
 }

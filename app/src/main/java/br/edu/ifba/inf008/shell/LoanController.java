@@ -14,7 +14,7 @@ public class LoanController implements ILoanController {
     private final ObservableList<IBook> rentedBooksList = FXCollections.observableArrayList();
     private final ObservableList<ILoan> overdueLoans = FXCollections.observableArrayList();
     public static int MAX_VALUE = 5;
-    public int loanId = 0;
+    public int loanIdCounter = 0;
 
     public LoanController() {
     }
@@ -24,7 +24,7 @@ public class LoanController implements ILoanController {
             return false;
         }
 
-        ILoan newLoan = new Loan(loanId++, books, date);
+        ILoan newLoan = new Loan(loanIdCounter++, books, date);
 
         if (date.plusDays(14).isBefore(LocalDate.now())) {
             // overdueBooks.addAll(books);
@@ -35,6 +35,14 @@ public class LoanController implements ILoanController {
 
         user.addLoan(newLoan);
         return true;
+    }
+
+    public int getLoanIdCounter() {
+        return loanIdCounter;
+    }
+
+    public void setLoanIdCounter(int counter) {
+        loanIdCounter = counter;
     }
 
     public void ReturnTransaction(ILoan loan) {
@@ -83,9 +91,17 @@ public class LoanController implements ILoanController {
         return rentedBooksList;
     }
 
+    public void loadRentedBooksList(ArrayList<IBook> rentedBooks) {
+        this.rentedBooksList.addAll(rentedBooks);
+    }
+
+    public void loadOverdueLoansList(ArrayList<ILoan> overdueLoans) {
+        this.overdueLoans.addAll(overdueLoans);
+    }
+
     public ObservableList<ILoan> getOverdueLoansList() {
 
-        for (IUser user : Core.getInstance().getUserController().getUsersList().values()) {
+        for (IUser user : Core.getInstance().getUserController().getUsersMap().values()) {
             if (!user.getRentedBooks().isEmpty()) {
                 for (ILoan loan : user.getRentedBooks()) {
                     LocalDate dueDate = loan.getStartDate().plusDays(14);

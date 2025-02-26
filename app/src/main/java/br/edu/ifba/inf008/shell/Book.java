@@ -1,8 +1,6 @@
 package br.edu.ifba.inf008.shell;
 
 import br.edu.ifba.inf008.interfaces.IBook;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 
 public class Book implements IBook {
     private String title;
@@ -10,7 +8,7 @@ public class Book implements IBook {
     private String author;
     private String genre;
     private String publicationYear;
-    private BooleanProperty isAvailable;
+    private boolean isAvailable;
 
     public Book() {
     }
@@ -21,7 +19,7 @@ public class Book implements IBook {
         this.author = author;
         this.genre = genre;
         this.publicationYear = publicationYear;
-        isAvailable = new SimpleBooleanProperty(true);
+        isAvailable = true;
     }
 
     public String getTitle() {
@@ -45,10 +43,10 @@ public class Book implements IBook {
     }
 
     public boolean isAvailable() {
-        return isAvailable.getValue();
+        return isAvailable;
     }
 
     public void setAvailable(boolean value) {
-        isAvailable.setValue(value);
+        isAvailable = value;
     }
 }

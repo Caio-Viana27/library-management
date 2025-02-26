@@ -80,6 +80,10 @@ public class BookController implements IBookController {
         return booksList;
     }
 
+    public void loadBookMap(HashMap<String, IBook> books) {
+        booksList = books;
+    }
+
     public Collection<IBook> getMatchingPatternBooks(String searchPattern) {
         var matchPatternBooks = new ArrayList<IBook>();
 
